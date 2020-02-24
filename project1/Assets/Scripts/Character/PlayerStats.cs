@@ -4,14 +4,12 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour {
 
-    // Health/Sp
-    private int health = 100;
-    private int maxHealth = 100;
-    private int sp = 30;
-    private int maxSp = 30;
+    private Class playerClass;
 
-    // Stats
-
+    private int health;
+    private int maxHealth;
+    private int sp;
+    private int maxSp;
 
     // Start is called before the first frame update
     void Start() {
@@ -29,9 +27,9 @@ public class PlayerStats : MonoBehaviour {
         if (this.health < 0) {
             // Dead
             this.health = 0;
-        } else if (this.health > maxHealth) {
+        } else if (this.health > this.maxHealth) {
             // Overhealed
-            this.health = maxHealth;
+            this.health = this.maxHealth;
         }
     }
 }

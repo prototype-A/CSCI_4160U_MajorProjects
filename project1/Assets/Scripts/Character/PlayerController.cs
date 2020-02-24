@@ -1,22 +1,39 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
     private SpriteRenderer sprite;
     private Animator animator;
+    [SerializeField] private GameObject gui;
 
+    // Movement
     [SerializeField] private float runSpeed = 0.1f;
     private float horizontalMovement = 0.0f;
     private float verticalMovement = 0.0f;
+    private float hInput;
+    private float vInput;
 
-    [SerializeField] private GameObject gui;
+    // Battle system
+    private float battleChance = 0.0f;
+    public float battleChanceModifier { get; set; } = 0.05f;
 
     // Start is called before the first frame update
     void Start() {
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+    }
+
+    private void EnterBattle() {
+        if (this.battleChance >= 100.0f) {
+            // Battle enemy
+            this.battleChance = 0.0f;
+            Debug.Log("Encountered an enemy!");
+        } else {
+            // Increase chance for enemy battle
+            System.Random rngesus = new System.Random();
+            this.battleChance += rngesus.Next(11) * battleChanceModifier;
+        }
     }
 
     // Update is called once per frame
@@ -32,10 +49,8 @@ public class PlayerController : MonoBehaviour {
             }
         }
 
-
-
         // Get horizontal movement input
-        float hInput = Input.GetAxis("Horizontal");
+        hInput = Input.GetAxis("Horizontal");
         if (hInput != 0) {
             if (hInput > 0) {
                 // Move right
@@ -51,7 +66,7 @@ public class PlayerController : MonoBehaviour {
         }
 
         // Get vertical movement input
-        float vInput = Input.GetAxis("Vertical");
+        vInput = Input.GetAxis("Vertical");
         if (vInput != 0) {
             if (vInput > 0) {
                 // Move up
@@ -76,5 +91,12 @@ public class PlayerController : MonoBehaviour {
         transform.Translate(new Vector3(horizontalMovement,
                                         verticalMovement,
                                         0.0f));
+    }
+
+    void FixedUpdate() {
+        if (hInput != 0 || vInput != 0) {
+            // Increase chance to battle enemy with every step
+            EnterBattle();
+        }
     }
 }

@@ -1,12 +1,36 @@
 {
-    "Saber": {
-        "1": [],
-        "2": [],
-        "3": [],
-        "5": []
-    },
-    "Caster": {
-
-    }
-
+    "classes": [
+        {
+            "className": "Swordsman",
+            "hpBase": 100,
+            "spBase": 20,
+            "str": 10,
+            "con": 5,
+            "spr": 2,
+            "skills": [
+                {
+                    "name": "Double Slash",
+                    "cost": 5,
+                    "dmgMultiplier": 0.8,
+                    "hits": 2
+                }
+            ]
+        },
+        {
+            "className": "Mage",
+            "hpBase": 80,
+            "spBase": 60,
+            "str": 2,
+            "con": 5,
+            "spr": 20,
+            "skills": [
+                {
+                    "name": "Fireball",
+                    "cost": 15,
+                    "dmgMultiplier": 2.0,
+                    "hits": 1
+                }
+            ]
+        }
+    ]
 }
