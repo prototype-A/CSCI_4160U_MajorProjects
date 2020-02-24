@@ -18,7 +18,6 @@ public class FloorGenerator : MonoBehaviour {
 
     [Range(1, 10)]
     public int numSimulations;
-    private int count = 0;
 
     private int[,] terrainMap;
     public Vector3Int tilemapSize;

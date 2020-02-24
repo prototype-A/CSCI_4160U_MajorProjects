@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour {
     private float horizontalMovement = 0.0f;
     private float verticalMovement = 0.0f;
 
+    [SerializeField] private GameObject gui;
+
     // Start is called before the first frame update
     void Start() {
         sprite = GetComponent<SpriteRenderer>();
@@ -19,6 +21,19 @@ public class PlayerController : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        // Key pressed
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            // Open/close menu
+            MenuButtonController menu = gui.GetComponent<MenuButtonController>();
+            if (menu.IsInMenu() && menu.IsInMenuScreen()) {
+                menu.CloseMenu();
+            } else if (!(menu.IsInMenu() || menu.IsInMenuScreen())) {
+                menu.ShowMenu();
+            }
+        }
+
+
+
         // Get horizontal movement input
         float hInput = Input.GetAxis("Horizontal");
         if (hInput != 0) {

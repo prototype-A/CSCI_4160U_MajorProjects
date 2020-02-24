@@ -1,16 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿public class Inventory {
 
-public class Inventory : MonoBehaviour {
+    private Item[,] items;
 
-
-    void Start() {
-
-    }
-
-    public void LoadInventory() {
-
+    public Inventory(int hSpace, int vSpace) {
+        this.items = new Item[hSpace, vSpace];
     }
 
     public void AddItem(string name, int count) {
