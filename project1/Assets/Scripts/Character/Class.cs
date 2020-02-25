@@ -2,10 +2,10 @@
 public class Class {
 
     public string className;
-    public int hpBase;
-    public int spBase;
 
     // Stats
+    public int hpBase;
+    public int spBase;
     public int str;
     public int con;
     public int spr;

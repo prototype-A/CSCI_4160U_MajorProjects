@@ -1,0 +1,40 @@
+{
+    "weapons": [
+        {
+            "name": "Sword",
+            "desc": "A sharp, metal blade attached to a basic wooden handle.",
+            "iconName": "W_Sword001"
+        },
+        {
+            "name": "Wooden Staff",
+            "desc": "A staff made out of wood that has been imbued with a tiny bit of magical power, allowing the wielder to channel their spiritual powers.",
+            "iconName": "W_Staff001"
+        }
+    ],
+    "prefixes": [
+        {
+            "prefix": "",
+            "color": "",
+            "chance": 40,
+            "addStats": []
+        },
+        {
+            "prefix": "Strong ",
+            "color": "Red",
+            "chance": 20,
+            "addStats": ["str"]
+        },
+        {
+            "prefix": "Colossal ",
+            "color": "Orange",
+            "chance": 20,
+            "addStats": ["con"]
+        },
+        {
+            "prefix": "Spiritual ",
+            "color": "Blue",
+            "chance": 20,
+            "addStats": ["spr"]
+        }
+    ]
+}

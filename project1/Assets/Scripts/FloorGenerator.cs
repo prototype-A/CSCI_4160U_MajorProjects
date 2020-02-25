@@ -110,6 +110,10 @@ public class FloorGenerator : MonoBehaviour {
         }
     }
 
+    public int[,] GetTerrainMap() {
+        return this.terrainMap;
+    }
+
     // Update is called once per frame
     void Update() {
         if (Input.GetMouseButtonDown(0)) {
