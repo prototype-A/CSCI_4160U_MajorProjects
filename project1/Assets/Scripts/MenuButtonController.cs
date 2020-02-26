@@ -9,11 +9,13 @@ public class MenuButtonController : MonoBehaviour {
     private bool inMenu = false;
     private bool inMenuScreen = false;
     private GameObject menu;
+    private GameObject prevMenu;
     private GameObject inventory;
     private GameObject characterCustomize;
     private GameObject saves;
 
-    private enum Confirmation { MainMenu, Quit }
+    private enum Confirmation { MainMenu, LoadGame, Quit }
+    private int saveNum;
     private Confirmation confirmAction;
     private GameObject confirmation;
 
@@ -61,7 +63,7 @@ public class MenuButtonController : MonoBehaviour {
         SetClassName();
     }
 
-    public void ClassSelect() {
+    public void ShowClassSelect() {
         // Load classes
         charClasses = JsonUtility.FromJson<Classes>(classJson.text);
         classIndex = 0;
@@ -90,7 +92,7 @@ public class MenuButtonController : MonoBehaviour {
     }
 
     public void ShowMenu() {
-        menu.SetActive(true);
+        this.menu.SetActive(true);
         inMenu = true;
         inMenuScreen = true;
     }
@@ -106,9 +108,20 @@ public class MenuButtonController : MonoBehaviour {
         inMenuScreen = false;
     }
 
-    public void BackToMenu(GameObject buttonClicked) {
-        buttonClicked.transform.parent.gameObject.SetActive(false);
-        ShowMenu();
+    public void SetPreviousMenu(GameObject prevMenu) {
+        this.prevMenu = prevMenu;
+    }
+
+    public void BackToMenu(GameObject menuToHide) {
+        menuToHide.SetActive(false);
+        if (this.prevMenu != null) {
+            // Show previous menu
+            this.prevMenu.SetActive(true);
+            this.prevMenu = null;
+        } else {
+            // Show game menu
+            ShowMenu();
+        }
     }
 
     public void OpenInventory() {
@@ -121,8 +134,89 @@ public class MenuButtonController : MonoBehaviour {
         characterCustomize.SetActive(true);
     }
 
+    public void SaveLoadGame(int saveNum) {
+        // For each individual game save profile
+        string savePath = Application.persistentDataPath + "/Save" + saveNum + ".sav";
+        if (saveloadMode == SaveState.Save) {
+            Debug.Log("Saving game to \"" + savePath + "\"");
+
+            // Create save
+            GameObject[] rootObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
+            GameObject player = null;
+            FloorGenerator floorGenerator = null;
+            for (int obj = 0; obj < rootObjects.Length; obj++) {
+                if (rootObjects[obj].name == "Player") {
+                    player = rootObjects[obj].gameObject;
+                } else if (rootObjects[obj].name == "Map") {
+                    floorGenerator = rootObjects[obj].gameObject.GetComponent<FloorGenerator>();
+                }
+            }
+            Vector3 currPlayerPos = player.transform.position;
+            float[] playerPos = {currPlayerPos.x, currPlayerPos.y, currPlayerPos.z};
+            GameSave gameSave = new GameSave(player.GetComponent<PlayerController>().stats, playerPos, floorGenerator.GetTerrainMap());
+            SaveGame(savePath, gameSave);
+
+            // Reload saves to show new save
+            PopulateSaves();
+        } else if (saveloadMode == SaveState.Load) {
+            if (File.Exists(savePath)) {
+                // Save found for profile
+                if (SceneManager.GetActiveScene().name == "MainMenu") {
+                    // No need to show load confirmation in main menu
+                    Debug.Log("Loading game from \"" + savePath + "\"");
+
+                    // Restore game save
+                    GameSave gameSave = LoadSave(savePath);
+                    Debug.Log("Save loaded");
+                } else {
+                    // Show confirmation to load save if in game
+                    this.saveNum = saveNum;
+                    SetPreviousMenu(saves);
+                    saves.SetActive(false);
+                    SetConfirmationYesButtonText("Load");
+                    SetConfirmationBodyText("You are about to load a saved game. Make sure you have saved your game, or you will lose all progress made.");
+                    ShowConfirmation("Load game?");
+                }
+            } else {
+                // No save found
+                Debug.Log("No save found in profile " + saveNum);
+            }
+        }
+    }
+
+    private void ResetSaveLoadPosition() {
+        // Scroll save profiles back to top
+        Vector3 pos = saves.transform.Find("Scroll Viewport").Find("Saves").localPosition;
+        float x = pos.x;
+        float z = pos.z;
+        saves.transform.Find("Scroll Viewport").Find("Saves").localPosition = new Vector3(x, -110.0f, z);
+    }
+
+    private void PopulateSaves() {
+        // Show saved class and save date if save data exists for profile
+        Transform saveProfiles = saves.transform.Find("Scroll Viewport").Find("Saves");
+        int numProfiles = saveProfiles.childCount;
+        for (int save = 1; save < numProfiles + 1; save++) {
+            Debug.Log("Populating save " + save);
+            string savePath = Application.persistentDataPath + "/Save" + (save - 1) + ".sav";
+            // Check if "Save#.sav" exists for profile #
+            if (File.Exists(savePath)) {
+                GameSave gameSave = LoadSave(savePath);
+                saveProfiles.Find("Save" + save).Find("NoSave").gameObject.SetActive(false);
+                saveProfiles.Find("Save" + save).Find("SaveData").Find("SavedClass").gameObject.GetComponent<TextMeshProUGUI>().text = gameSave.playerStats.playerClass.className;
+                saveProfiles.Find("Save" + save).Find("SaveData").Find("DateSaved").gameObject.GetComponent<TextMeshProUGUI>().text = gameSave.saveDate;
+                saveProfiles.Find("Save" + save).Find("SaveData").gameObject.SetActive(true);
+            } else {
+                try {
+                    saveProfiles.Find("Save" + save).Find("SaveData").gameObject.SetActive(false);
+                } catch {}
+                saveProfiles.Find("Save" + save).Find("NoSave").gameObject.SetActive(true);
+            }
+        }
+    }
+
     private void SaveGame(string savePath, GameSave gameSave) {
-        // Write save as binary file
+        // Write save to binary file
         BinaryFormatter binFormatter = new BinaryFormatter();
         FileStream saveFile = File.Create(savePath);
         binFormatter.Serialize(saveFile, gameSave);
@@ -139,63 +233,7 @@ public class MenuButtonController : MonoBehaviour {
         return save;
     }
 
-    public void SaveLoadGame(int saveNum) {
-        // For each individual game save profile
-        string savePath = Application.persistentDataPath + "Save" + saveNum + ".sav";
-        if (saveloadMode == SaveState.Save) {
-            Debug.Log("Saving game to \"" + savePath + "\"");
-
-            // Create save
-            GameObject player = transform.parent.Find("Player").gameObject;
-            Vector3 currPlayerPos = player.transform.position;
-            Vector3 playerPos = new Vector3(currPlayerPos.x, currPlayerPos.y, currPlayerPos.z);
-            FloorGenerator floorGenerator = transform.parent.Find("Map").GetComponent<FloorGenerator>();
-            GameSave gameSave = new GameSave(player.GetComponent<PlayerStats>().playerClass, playerPos, floorGenerator.GetTerrainMap());
-            SaveGame(savePath, gameSave);
-        } else if (saveloadMode == SaveState.Load) {
-            if (File.Exists(savePath)) {
-                // Save found for profile
-                Debug.Log("Loading game from \"" + savePath + "\"");
-
-                // Restore game save
-                GameSave gameSave = LoadSave(savePath);
-                Debug.Log("Save loaded");
-            } else {
-                // No save found
-                Debug.Log("No save found in profile " + saveNum);
-            }
-        }
-    }
-
-    private void ResetSaveLoadPosition() {
-        // Scroll save profiles back to top
-        Vector3 pos = saves.transform.Find("Scroll Viewport").Find("Saves").localPosition;
-        float x = pos.x;
-        float z = pos.z;
-        saves.transform.Find("Scroll Viewport").Find("Saves").localPosition = new Vector3(x, -120.0f, z);
-    }
-
-    private void PopulateSaves() {
-        // Show saved class and save date if save data exists for profile
-        Transform saveProfiles = saves.transform.Find("Scroll Viewport").Find("Saves");
-        int numProfiles = saveProfiles.childCount;
-        for (int save = 1; save < numProfiles; save++) {
-            string savePath = Application.persistentDataPath + "Save" + save + ".sav";
-            // Check if "Save#.sav" exists for profile #
-            if (File.Exists(savePath)) {
-                GameSave gameSave = LoadSave(savePath);
-                saveProfiles.Find("Save" + save).Find("NoSave").gameObject.SetActive(false);
-                saveProfiles.Find("Save" + save).Find("SaveData").Find("SavedClass").gameObject.GetComponent<TextMeshProUGUI>().text = gameSave.playerClass.className;
-                saveProfiles.Find("Save" + save).Find("SaveData").Find("DateSaved").gameObject.GetComponent<TextMeshProUGUI>().text = gameSave.saveDate;
-                saveProfiles.Find("Save" + save).Find("SaveData").gameObject.SetActive(true);
-            } else {
-                saveProfiles.Find("Save" + save).Find("SaveData").gameObject.SetActive(false);
-                saveProfiles.Find("Save" + save).Find("NoSave").gameObject.SetActive(true);
-            }
-        }
-    }
-
-    public void SaveGame() {
+    public void ShowSaveMenu() {
         // Populate save profiles
         PopulateSaves();
 
@@ -207,7 +245,7 @@ public class MenuButtonController : MonoBehaviour {
         saves.SetActive(true);
     }
 
-    public void LoadGame() {
+    public void ShowLoadMenu() {
         // Populate save profiles
         PopulateSaves();
 
@@ -227,7 +265,6 @@ public class MenuButtonController : MonoBehaviour {
     public void QuitGame() {
         Debug.Log("Quitting game");
     }
-
 
     // Confirmation window functions
     public void ShowConfirmation(string titleText) {
@@ -262,6 +299,9 @@ public class MenuButtonController : MonoBehaviour {
         if (this.confirmAction == Confirmation.MainMenu) {
             // Return to main menu
             LoadMainMenu();
+        } else if (this.confirmAction == Confirmation.LoadGame) {
+            // Load another saved game
+
         } else if (this.confirmAction == Confirmation.Quit) {
             // Quit game
             QuitGame();

@@ -56,8 +56,6 @@ public class BattleInterface : MonoBehaviour {
                 SetActiveAction();
             }
         }
-
-
     }
 
     private void GenerateEnemy() {

@@ -4,15 +4,15 @@ using UnityEngine;
 [System.Serializable]
 public class GameSave {
 
-    public Class playerClass;
-    public Vector3 playerPos;
+    public PlayerStats playerStats;
+    public float[] playerPos;
     public int[,] terrainMap;
     public string saveDate;
 
-    public GameSave(Class playerClass, Vector3 playerPos, int[,] terrainMap) {
-        this.playerClass = playerClass;
+    public GameSave(PlayerStats playerStats, float[] playerPos, int[,] terrainMap) {
+        this.playerStats = playerStats;
         this.playerPos = playerPos;
         this.terrainMap = terrainMap;
-        this.saveDate = new DateTime().Date.ToString("MM/dd/yyyy HH:mm");
+        this.saveDate = DateTime.Now.ToString("MM/dd/yyyy HH:mm");
     }
 }

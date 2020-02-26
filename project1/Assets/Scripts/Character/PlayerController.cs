@@ -5,6 +5,7 @@ public class PlayerController : MonoBehaviour {
 
     private SpriteRenderer sprite;
     private Animator animator;
+    public PlayerStats stats;
     [SerializeField] private GameObject gui;
 
     // Movement
@@ -22,6 +23,9 @@ public class PlayerController : MonoBehaviour {
     void Start() {
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+
+        // Initialize player stats
+
     }
 
     private void EnterBattle() {

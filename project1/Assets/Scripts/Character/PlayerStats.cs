@@ -1,24 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class PlayerStats : MonoBehaviour {
+[System.Serializable]
+public class PlayerStats {
 
     public Class playerClass;
 
+    private int level;
     private int health;
     private int maxHealth;
     private int sp;
     private int maxSp;
 
-    // Start is called before the first frame update
-    void Start() {
+    private int str;
+    private int con;
+    private int spr;
 
-    }
-
-    // Update is called once per frame
-    void Update() {
-
+    public void UpdateStats() {
+        this.str = playerClass.str;
+        this.con = playerClass.con;
+        this.spr = playerClass.spr;
     }
 
     public void TakeDamage(int damageTaken) {
