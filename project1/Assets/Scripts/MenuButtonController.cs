@@ -172,14 +172,14 @@ public class MenuButtonController : MonoBehaviour {
         Vector3 pos = saves.transform.Find("Scroll Viewport").Find("Saves").localPosition;
         float x = pos.x;
         float z = pos.z;
-        saves.transform.Find("Scroll Viewport").Find("Saves").localPosition = new Vector3(x, -190.0f, z);
+        saves.transform.Find("Scroll Viewport").Find("Saves").localPosition = new Vector3(x, -120.0f, z);
     }
 
     private void PopulateSaves() {
         // Show saved class and save date if save data exists for profile
         Transform saveProfiles = saves.transform.Find("Scroll Viewport").Find("Saves");
         int numProfiles = saveProfiles.childCount;
-        for (int save = 1; save < numProfiles + 1; save++) {
+        for (int save = 1; save < numProfiles; save++) {
             string savePath = Application.persistentDataPath + "Save" + save + ".sav";
             // Check if "Save#.sav" exists for profile #
             if (File.Exists(savePath)) {
