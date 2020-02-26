@@ -3,11 +3,11 @@
     private int maxNumPerStack { get; }
     private int numHeld { get; }
 
-    public StackableItem(string name, string desc) : base(name, desc) {
+    public StackableItem(string name, string desc, string icon) : base(name, desc, icon) {
         this.numHeld = 0;
     }
 
-    public StackableItem(string name, string desc, int numHeld) : this(name, desc) {
+    public StackableItem(string name, string desc, string icon, int numHeld) : this(name, desc, icon) {
         this.numHeld = numHeld;
         this.maxNumPerStack = 99;
     }

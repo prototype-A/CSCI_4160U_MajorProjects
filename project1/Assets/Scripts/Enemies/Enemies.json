@@ -1,0 +1,30 @@
+{
+    "enemies": [
+        {
+            "name": "Snipcorpio",
+            "sprite": "ImpScorpio_0",
+            "hpBase": 60,
+            "hpPerLvl": 5,
+            "dmgBase": 5,
+            "dmgPerLvl": 3,
+            "drops": [
+                {
+                    "name": "Wooden Sword",
+                    "chance": 20
+                },
+                {
+                    "name": "Wooden Staff",
+                    "chance": 20
+                },
+                {
+                    "name": "Small HP Potion",
+                    "chance": 33
+                },
+                {
+                    "name": "Small SP Potion",
+                    "chance": 33
+                }
+            ]
+        }
+    ]
+}

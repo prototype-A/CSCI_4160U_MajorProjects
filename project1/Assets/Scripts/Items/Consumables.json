@@ -1,0 +1,18 @@
+{
+    "consumables": [
+        {
+            "name": "Small HP Potion",
+            "desc": "A small potion that heals for 20 HP",
+            "type": "HP",
+            "heal": 20,
+            "icon": "P_Red02"
+        },
+        {
+            "name": "Small SP Potion",
+            "desc": "A small potion that heals for 30 SP",
+            "type": "SP",
+            "heal": 30,
+            "icon": "P_Blue02"
+        }
+    ]
+}

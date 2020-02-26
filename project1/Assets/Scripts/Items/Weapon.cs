@@ -4,9 +4,9 @@ public class Weapon : Item {
     public string prefix { get; }
     public string color { get; }
 
-    public Weapon(string name, string desc) : base(name, desc) {}
+    public Weapon(string name, string desc, string icon) : base(name, desc, icon) {}
 
-    public Weapon(Item baseWeapon, Prefix prefix) : base(baseWeapon.name, baseWeapon.desc) {
+    public Weapon(Item baseWeapon, Prefix prefix) : base(baseWeapon.name, baseWeapon.desc, baseWeapon.icon) {
         if (prefix != null) {
             this.prefix = prefix.prefix;
             this.color = prefix.color;
