@@ -3,21 +3,30 @@ using System.Collections;
 ﻿[System.Serializable]
 public class Enemy {
     public string name;
-    public string sprite;
     public int level;
+    public float hp;
+    public int maxHp;
     public int hpBase;
     public int hpPerLvl;
     public int dmgBase;
     public int dmgPerLvl;
     public ItemDrop[] drops;
+    private System.Random rngesus;
+
+    public Enemy() {
+        this.rngesus = new System.Random();
+    }
+
+    public int Attack() {
+        return this.GetDamage();
+    }
 
     public int GetDamage() {
-        return this.dmgBase + (this.dmgPerLvl * this.level);
+        return this.dmgBase + (this.dmgPerLvl * (this.level - 1));
     }
 
     public string[] GetDrops() {
         ArrayList droppedItems = new ArrayList();
-        System.Random rngesus = new System.Random();
         foreach (ItemDrop drop in drops) {
             if (rngesus.Next(101) <= drop.chance) {
                 droppedItems.Add(drop.name);
@@ -27,11 +36,32 @@ public class Enemy {
         return (string[])droppedItems.ToArray(typeof(string));
     }
 
+    public float GetExpGain() {
+        return this.level * 5;
+    }
+
     public void SetLevel(int playerLevel) {
-        // Randomly set enemy level between 10 levels lower or high than player
-        int rangeLow = ((playerLevel - 10) < 0) ? 1 : playerLevel - 10;
-        int rangeHigh = (playerLevel + 10);
-        System.Random rngesus = new System.Random();
+        // Randomly set enemy level between 5 levels lower or high than player
+        int range = 5;
+        int rangeLow = ((playerLevel - range) <= 0) ? 1 : playerLevel - range;
+        int rangeHigh = playerLevel + range;
         this.level = rngesus.Next(rangeLow, rangeHigh + 1);
+        this.maxHp = this.hpBase + (this.hpPerLvl * (this.level - 1));
+        this.hp = maxHp;
+    }
+
+    public int TakeDamage(int damageTaken) {
+        // Take damage
+        this.hp -= damageTaken;
+
+        if (this.hp < 0) {
+            // Dead
+            this.hp = 0;
+        } else if (this.hp > this.hpBase) {
+            // Overhealed
+            this.hp = this.hpBase;
+        }
+
+        return damageTaken;
     }
 }

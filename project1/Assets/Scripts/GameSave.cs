@@ -9,8 +9,8 @@ public class GameSave {
     public int[,] terrainMap;
     public string saveDate;
 
-    public GameSave(PlayerStats playerStats, float[] playerPos, int[,] terrainMap) {
-        this.playerStats = playerStats;
+    public GameSave(float[] playerPos, int[,] terrainMap) {
+        this.playerStats = GameData.playerStats;
         this.playerPos = playerPos;
         this.terrainMap = terrainMap;
         this.saveDate = DateTime.Now.ToString("MM/dd/yyyy HH:mm");

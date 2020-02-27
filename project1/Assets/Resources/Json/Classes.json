@@ -2,11 +2,14 @@
     "classes": [
         {
             "className": "Swordsman",
-            "hpBase": 100,
-            "spBase": 20,
+            "hpBase": 95,
+            "spBase": 18,
             "str": 10,
+            "strPerLvl": 5,
             "con": 5,
+            "conPerLevel": 5,
             "spr": 2,
+            "sprPerLvl": 2,
             "skills": [
                 {
                     "name": "Double Slash",
@@ -18,11 +21,14 @@
         },
         {
             "className": "Mage",
-            "hpBase": 80,
-            "spBase": 60,
+            "hpBase": 55,
+            "spBase": 50,
             "str": 2,
+            "strPerLvl": 2,
             "con": 5,
-            "spr": 20,
+            "conPerLevel": 5,
+            "spr": 10,
+            "sprPerLvl": 5,
             "skills": [
                 {
                     "name": "Fireball",

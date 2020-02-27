@@ -19,21 +19,17 @@ public class FloorGenerator : MonoBehaviour {
     [Range(1, 10)]
     public int numSimulations;
 
-    private int[,] terrainMap;
-    public Vector3Int tilemapSize;
+    public int width = 60;
+    public int height = 40;
+    public int[,] terrainMap;
 
     public Tilemap topMap;
     public Tilemap botMap;
     public Tile topTile;
     public Tile bottomTile;
 
-    int width;
-    int height;
-
     private void doSim() {
         clearMap(false);
-        width = tilemapSize.x;
-        height = tilemapSize.y;
 
         if (terrainMap == null) {
             terrainMap = new int[width, height];
@@ -44,6 +40,10 @@ public class FloorGenerator : MonoBehaviour {
             terrainMap = genTilePos(terrainMap);
         }
 
+        FillTiles();
+    }
+
+    public void FillTiles() {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 if (terrainMap[x, y] == 1) {
@@ -110,14 +110,7 @@ public class FloorGenerator : MonoBehaviour {
         }
     }
 
-    public int[,] GetTerrainMap() {
-        return this.terrainMap;
-    }
-
-    // Update is called once per frame
-    void Update() {
-        if (Input.GetMouseButtonDown(0)) {
-            doSim();
-        }
+    void Start() {
+        doSim();
     }
 }

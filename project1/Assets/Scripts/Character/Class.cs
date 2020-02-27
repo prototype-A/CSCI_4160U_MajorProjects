@@ -9,6 +9,9 @@ public class Class {
     public int str;
     public int con;
     public int spr;
+    public int strPerLvl;
+    public int conPerLvl;
+    public int sprPerLvl;
 
     public Skill[] skills;
 }
