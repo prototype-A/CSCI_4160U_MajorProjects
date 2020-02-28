@@ -13,6 +13,8 @@
             "skills": [
                 {
                     "name": "Double Slash",
+                    "dmgType": "Physical",
+                    "costType": "SP",
                     "cost": 5,
                     "dmgMultiplier": 0.8,
                     "hits": 2
@@ -32,6 +34,8 @@
             "skills": [
                 {
                     "name": "Fireball",
+                    "dmgType": "Magic",
+                    "costType": "SP",
                     "cost": 15,
                     "dmgMultiplier": 2.0,
                     "hits": 1

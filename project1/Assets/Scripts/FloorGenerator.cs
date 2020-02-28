@@ -28,7 +28,8 @@ public class FloorGenerator : MonoBehaviour {
     public Tile topTile;
     public Tile bottomTile;
 
-    private void doSim() {
+
+    public void generateMap() {
         clearMap(false);
 
         if (terrainMap == null) {
@@ -108,9 +109,5 @@ public class FloorGenerator : MonoBehaviour {
         if (complete) {
             terrainMap = null;
         }
-    }
-
-    void Start() {
-        doSim();
     }
 }

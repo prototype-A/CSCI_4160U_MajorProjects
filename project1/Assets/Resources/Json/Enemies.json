@@ -10,18 +10,22 @@
             "drops": [
                 {
                     "name": "Wooden Sword",
+                    "maxAmount": 1,
                     "chance": 15
                 },
                 {
                     "name": "Wooden Staff",
+                    "maxAmount": 1,
                     "chance": 15
                 },
                 {
                     "name": "Small HP Potion",
+                    "maxAmount": 1,
                     "chance": 40
                 },
                 {
                     "name": "Small SP Potion",
+                    "maxAmount": 1,
                     "chance": 40
                 }
             ]

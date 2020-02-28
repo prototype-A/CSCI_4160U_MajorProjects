@@ -16,10 +16,11 @@ public static class GameData {
     // Player
     public static Classes playableClasses = JsonUtility.FromJson<Classes>(classJson.text);
     public static Class[] playerClasses = playableClasses.classes;
-    public static PlayerStats playerStats;
+    public static PlayerData playerData;
     public static Inventory playerInventory;
     public static bool inBattle;
     public static GameObject playerSprite;
+    public static GameObject playerGui;
     public static GameSave gameSave;
 
     // Items
@@ -29,10 +30,12 @@ public static class GameData {
 
 
     public static void LoadSaveData() {
+        // Get objects at root of scene
+        GameObject[] rootObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
+
         if (gameSave != null) {
             // Restore game savedata
-            playerStats = gameSave.playerStats;
-            GameObject[] rootObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
+            playerData = gameSave.playerData;
             Transform map = null;
             Transform player = null;
             for (int i = 0; i < rootObjects.Length; i++) {
@@ -49,8 +52,33 @@ public static class GameData {
             floorGenerator.FillTiles();
             player.position = new Vector3(gameSave.playerPos[0], gameSave.playerPos[1], gameSave.playerPos[2]);
             gameSave = null;
-
-            Debug.Log("Save loaded");
+        } else {
+            // Generate a map if there is no savedata to load
+            GameObject map = null;
+            for (int i = 0; i < rootObjects.Length; i++) {
+                if (rootObjects[i].name == "Map") {
+                    map = rootObjects[i];
+                    break;
+                }
+            }
+            map.GetComponent<FloorGenerator>().generateMap();
         }
+    }
+
+    public static Consumable GetConsumable(string name) {
+        return GameData.consumables[name];
+    }
+
+    public static Weapon GenerateWeapon(string name) {
+        // Randomly generate a weapon
+        System.Random rngesus = new System.Random();
+        Item baseWeapon = GameData.weapons[name];
+        Prefix prefix = GameData.weaponPrefixes[rngesus.Next(GameData.weaponPrefixes.Length)];
+        if (rngesus.Next(101) > prefix.chance) {
+            // Chance of not obtaining boosted gear
+            prefix = null;
+        }
+
+        return new Weapon(baseWeapon, prefix);
     }
 }

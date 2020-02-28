@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour {
         animator = GetComponent<Animator>();
 
         GameData.playerSprite = this.transform.gameObject;
+        GameData.playerGui = this.transform.Find("GUI").gameObject;
     }
 
     private void EnterBattle() {
@@ -50,7 +51,6 @@ public class PlayerController : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         if (!GameData.inBattle) {
-            // Walking around
             // Key pressed
             if (Input.GetKeyDown(KeyCode.Escape)) {
                 // Open/close menu

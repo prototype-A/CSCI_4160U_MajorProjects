@@ -1,14 +1,15 @@
 using System.Collections.Generic;
 
 [System.Serializable]
-public class PlayerStats {
+public class PlayerData {
 
     public Class playerClass;
+    public Inventory playerInventory { get; }
 
     public int level;
     public float health;
     public int maxHealth;
-    public int sp;
+    public float sp;
     public int maxSp;
     public float exp;
     public int maxExp;
@@ -17,8 +18,9 @@ public class PlayerStats {
     public int con;
     public int spr;
 
-    public PlayerStats(string chosenClass) {
+    public PlayerData(string chosenClass) {
         playerClass = GameData.playableClasses.GetDict()[chosenClass];
+        playerInventory = new Inventory();
         this.level = 1;
         this.exp = 0;
         UpdateStats(true);
@@ -55,6 +57,35 @@ public class PlayerStats {
 
     public int GetDamage() {
         return this.level + this.str;
+    }
+
+    public bool CanUseSkill(Skill skill) {
+        if (skill.costType == "SP") {
+            return this.sp >= skill.cost;
+        }
+
+        return false;
+    }
+
+    public int UseSkill(Skill skill) {
+        if (this.CanUseSkill(skill)) {
+            // Pay the skill cost
+            if (skill.costType == "SP") {
+                this.sp -= skill.cost;
+            }
+
+            // Calculate skill damage based on type
+            float damage = 0;
+            if (skill.dmgType == "Physical") {
+                damage = this.str * skill.dmgMultiplier * skill.hits;
+            } else if (skill.dmgType == "Magic") {
+                damage = this.spr * skill.dmgMultiplier * skill.hits;
+            }
+
+            return (int)damage;
+        }
+
+        return -1;
     }
 
     public int TakeDamage(int damage) {

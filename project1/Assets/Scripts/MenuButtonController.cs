@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
@@ -17,7 +18,7 @@ public class MenuButtonController : MonoBehaviour {
     private GameObject menu;
     private GameObject prevMenu;
     private GameObject inventory;
-    private GameObject character;
+    private GameObject characterScreen;
     private GameObject saves;
     private enum Confirmation { MainMenu, SaveLoad, Quit }
     private int saveNum;
@@ -50,21 +51,21 @@ public class MenuButtonController : MonoBehaviour {
             // Playing game
             menu = transform.Find("Menu").gameObject;
             inventory = transform.Find("Inventory").gameObject;
-            character = transform.Find("Character").gameObject;
+            characterScreen = transform.Find("Character").gameObject;
             saves = transform.Find("SavegameMenu").gameObject;
             confirmation = transform.Find("ConfirmationWindow").gameObject;
 
-            characterLevelText = character.transform.Find("Stats").Find("Level").gameObject.GetComponent<TextMeshProUGUI>();
-            characterClassText = character.transform.Find("Stats").Find("Class").gameObject.GetComponent<TextMeshProUGUI>();
-            characterHpBar = character.transform.Find("Stats").Find("HPBar").Find("Bar").gameObject.GetComponent<RectTransform>();
-            characterHpText = character.transform.Find("Stats").Find("HPBar").Find("HPLabel").gameObject.GetComponent<TextMeshProUGUI>();
-            characterSpBar = character.transform.Find("Stats").Find("SPBar").Find("Bar").gameObject.GetComponent<RectTransform>();
-            characterSpText = character.transform.Find("Stats").Find("SPBar").Find("SPLabel").gameObject.GetComponent<TextMeshProUGUI>();
-            characterExpBar = character.transform.Find("Stats").Find("ExpBar").Find("Bar").gameObject.GetComponent<RectTransform>();
-            characterExpText = character.transform.Find("Stats").Find("ExpBar").Find("ExpLabel").gameObject.GetComponent<TextMeshProUGUI>();
-            characterStrText = character.transform.Find("Stats").Find("Stats").Find("Str").Find("Value").gameObject.GetComponent<TextMeshProUGUI>();
-            characterConText = character.transform.Find("Stats").Find("Stats").Find("Con").Find("Value").gameObject.GetComponent<TextMeshProUGUI>();
-            characterSprText = character.transform.Find("Stats").Find("Stats").Find("Spr").Find("Value").gameObject.GetComponent<TextMeshProUGUI>();
+            characterLevelText = characterScreen.transform.Find("Stats").Find("Level").gameObject.GetComponent<TextMeshProUGUI>();
+            characterClassText = characterScreen.transform.Find("Stats").Find("Class").gameObject.GetComponent<TextMeshProUGUI>();
+            characterHpBar = characterScreen.transform.Find("Stats").Find("HPBar").Find("Bar").gameObject.GetComponent<RectTransform>();
+            characterHpText = characterScreen.transform.Find("Stats").Find("HPBar").Find("HPLabel").gameObject.GetComponent<TextMeshProUGUI>();
+            characterSpBar = characterScreen.transform.Find("Stats").Find("SPBar").Find("Bar").gameObject.GetComponent<RectTransform>();
+            characterSpText = characterScreen.transform.Find("Stats").Find("SPBar").Find("SPLabel").gameObject.GetComponent<TextMeshProUGUI>();
+            characterExpBar = characterScreen.transform.Find("Stats").Find("ExpBar").Find("Bar").gameObject.GetComponent<RectTransform>();
+            characterExpText = characterScreen.transform.Find("Stats").Find("ExpBar").Find("ExpLabel").gameObject.GetComponent<TextMeshProUGUI>();
+            characterStrText = characterScreen.transform.Find("Stats").Find("Stats").Find("Str").Find("Value").gameObject.GetComponent<TextMeshProUGUI>();
+            characterConText = characterScreen.transform.Find("Stats").Find("Stats").Find("Con").Find("Value").gameObject.GetComponent<TextMeshProUGUI>();
+            characterSprText = characterScreen.transform.Find("Stats").Find("Stats").Find("Spr").Find("Value").gameObject.GetComponent<TextMeshProUGUI>();
 
             // Load save data, if any
             GameData.LoadSaveData();
@@ -102,7 +103,7 @@ public class MenuButtonController : MonoBehaviour {
     public void PlayGame() {
         // Start new game
         string chosenClass = classSelect.transform.Find("Selection").Find("ClassText").gameObject.GetComponent<TextMeshProUGUI>().text;
-        GameData.playerStats = new PlayerStats(chosenClass);
+        GameData.playerData = new PlayerData(chosenClass);
         GameData.playerInventory = new Inventory();
         SceneManager.LoadScene("PlayGame");
     }
@@ -158,25 +159,28 @@ public class MenuButtonController : MonoBehaviour {
     public void OpenInventory() {
         HideMenu();
         inventory.SetActive(true);
+
+        // Update inventory
+
     }
 
     public void OpenCharacterScreen() {
         HideMenu();
 
         // Update character screen
-        characterLevelText.text = "Level: " + GameData.playerStats.level;
-        characterClassText.text = "Class: " + GameData.playerStats.playerClass.className;
-        characterHpText.text = GameData.playerStats.health + "/" + GameData.playerStats.maxHealth;
-        characterSpText.text = GameData.playerStats.sp + "/" + GameData.playerStats.maxSp;
-        characterExpText.text = GameData.playerStats.exp / GameData.playerStats.maxExp + "%";
-        characterStrText.text = "" + GameData.playerStats.str;
-        characterConText.text = "" + GameData.playerStats.con;
-        characterSprText.text = "" + GameData.playerStats.spr;
-        Utils.SetRectRight(characterHpBar, Utils.CalculateRectRight(GameData.playerStats.health, GameData.playerStats.maxHealth, 160, -110));
-        Utils.SetRectRight(characterSpBar, Utils.CalculateRectRight(GameData.playerStats.sp, GameData.playerStats.maxSp, 160, -110));
-        Utils.SetRectRight(characterExpBar, Utils.CalculateRectRight(GameData.playerStats.exp, GameData.playerStats.maxExp, 160, -110));
+        characterLevelText.text = "Level: " + GameData.playerData.level;
+        characterClassText.text = "Class: " + GameData.playerData.playerClass.className;
+        characterHpText.text = GameData.playerData.health + "/" + GameData.playerData.maxHealth;
+        characterSpText.text = GameData.playerData.sp + "/" + GameData.playerData.maxSp;
+        characterExpText.text = Math.Truncate((double)(GameData.playerData.exp / GameData.playerData.maxExp) * 100.0) + "%";
+        characterStrText.text = "" + GameData.playerData.str;
+        characterConText.text = "" + GameData.playerData.con;
+        characterSprText.text = "" + GameData.playerData.spr;
+        Utils.SetRectRight(characterHpBar, Utils.CalculateRectRight(GameData.playerData.health, GameData.playerData.maxHealth, 160, -110));
+        Utils.SetRectRight(characterSpBar, Utils.CalculateRectRight(GameData.playerData.sp, GameData.playerData.maxSp, 160, -110));
+        Utils.SetRectRight(characterExpBar, Utils.CalculateRectRight(GameData.playerData.exp, GameData.playerData.maxExp, 160, -110));
 
-        character.SetActive(true);
+        characterScreen.SetActive(true);
     }
 
     public void SaveLoadGame(int saveNum) {
@@ -199,7 +203,7 @@ public class MenuButtonController : MonoBehaviour {
                 SetConfirmationBodyText("You are about to overwrite a saved game. By overwriting it, you will lose all data in that save. Are you sure you want to continue saving?");
                 ShowConfirmation("Overwrite save?");
             } else {
-                Debug.Log("Saving game to \"" + savePath + "\"");
+                //Debug.Log("Saving game to \"" + savePath + "\"");
 
                 // Create save
                 GameObject[] rootObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
@@ -232,7 +236,7 @@ public class MenuButtonController : MonoBehaviour {
                     // No need to show load confirmation in main menu
                     // or
                     // Player confirmed to load
-                    Debug.Log("Loading game from \"" + savePath + "\"");
+                    //Debug.Log("Loading game from \"" + savePath + "\"");
 
                     // Load save data
                     GameData.gameSave = LoadSave(savePath);
@@ -257,13 +261,9 @@ public class MenuButtonController : MonoBehaviour {
                 }
             } else {
                 // No save found
-                Debug.Log("No save found in profile " + saveNum);
+                //Debug.Log("No save found in profile " + saveNum);
             }
         }
-    }
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
-
     }
 
     private void ResetSaveLoadPosition() {
@@ -271,7 +271,7 @@ public class MenuButtonController : MonoBehaviour {
         Vector3 pos = saves.transform.Find("Scroll Viewport").Find("Saves").localPosition;
         float x = pos.x;
         float z = pos.z;
-        saves.transform.Find("Scroll Viewport").Find("Saves").localPosition = new Vector3(x, -110.0f, z);
+        saves.transform.Find("Scroll Viewport").Find("Saves").localPosition = new Vector3(x, -195.0f, z);
     }
 
     private void PopulateSaves() {
@@ -284,7 +284,7 @@ public class MenuButtonController : MonoBehaviour {
             if (File.Exists(savePath)) {
                 GameSave gameSave = LoadSave(savePath);
                 saveProfiles.Find("Save" + save).Find("NoSave").gameObject.SetActive(false);
-                saveProfiles.Find("Save" + save).Find("SaveData").Find("SavedClass").gameObject.GetComponent<TextMeshProUGUI>().text = gameSave.playerStats.playerClass.className;
+                saveProfiles.Find("Save" + save).Find("SaveData").Find("SavedClass").gameObject.GetComponent<TextMeshProUGUI>().text = gameSave.playerData.playerClass.className;
                 saveProfiles.Find("Save" + save).Find("SaveData").Find("DateSaved").gameObject.GetComponent<TextMeshProUGUI>().text = gameSave.saveDate;
                 saveProfiles.Find("Save" + save).Find("SaveData").gameObject.SetActive(true);
             } else {

@@ -1,5 +1,5 @@
 ﻿[System.Serializable]
-public class Consumable : Item {
+public class Consumable : StackableItem {
     public string type;
     public int heal;
 }

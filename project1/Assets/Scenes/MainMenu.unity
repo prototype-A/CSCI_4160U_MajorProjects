@@ -3703,7 +3703,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6ff93893eaa3794f9022d7d6c05eabf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  classJson: {fileID: 4900000, guid: d752ea59e2f14114d922279949e59fd4, type: 3}
 --- !u!1 &841823905
 GameObject:
   m_ObjectHideFlags: 0
@@ -4226,6 +4225,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 830734917}
     m_Modifications:
+    - target: {fileID: 1238874675307109036, guid: 65cf4c8b36ba12f499440198e596d454,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 830734918}
+    - target: {fileID: 1238874675307109036, guid: 65cf4c8b36ba12f499440198e596d454,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SaveLoadGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 1238874675307109036, guid: 65cf4c8b36ba12f499440198e596d454,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 2378959718810643458, guid: 65cf4c8b36ba12f499440198e596d454,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -4405,6 +4419,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: SaveLoadGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 8774330080986253868, guid: 65cf4c8b36ba12f499440198e596d454,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 830734918}
+    - target: {fileID: 8774330080986253868, guid: 65cf4c8b36ba12f499440198e596d454,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SaveLoadGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 8774330080986253868, guid: 65cf4c8b36ba12f499440198e596d454,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 65cf4c8b36ba12f499440198e596d454, type: 3}
