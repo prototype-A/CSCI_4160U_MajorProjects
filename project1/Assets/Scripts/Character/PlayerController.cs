@@ -23,6 +23,8 @@ public class PlayerController : MonoBehaviour {
     void Start() {
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+
+        GameData.playerSprite = this.transform.gameObject;
     }
 
     private void EnterBattle() {

@@ -11,25 +11,30 @@ public class PlayerStats {
     public int sp;
     public int maxSp;
     public float exp;
+    public int maxExp;
 
-    private int str;
-    private int con;
-    private int spr;
+    public int str;
+    public int con;
+    public int spr;
 
     public PlayerStats(string chosenClass) {
         playerClass = GameData.playableClasses.GetDict()[chosenClass];
         this.level = 1;
+        this.exp = 0;
         UpdateStats(true);
     }
 
-    public void AddExp(float exp) {
+    public bool GainExp(float exp) {
         this.exp += exp;
-        if (this.exp > this.level * 10) {
+        if (this.exp >= this.maxExp) {
             // Level up
-            this.level++;
             this.exp -= this.level * 10;
+            this.level++;
             UpdateStats(true);
+            return true;
         }
+
+        return false;
     }
 
     public void UpdateStats(bool fullHeal = false) {
@@ -39,6 +44,8 @@ public class PlayerStats {
 
         this.maxHealth = playerClass.hpBase + this.con;
         this.maxSp = playerClass.spBase + this.spr;
+
+        this.maxExp = this.level * 10;
 
         if (fullHeal) {
             this.health = maxHealth;

@@ -6,22 +6,35 @@ using TMPro;
 
 public class MenuButtonController : MonoBehaviour {
 
+    // Main Menu Class Selection
+    private GameObject classSelect;
+    private Class[] charClasses;
+    private int classIndex;
+
+    // UI
     private bool inMenu = false;
     private bool inMenuScreen = false;
     private GameObject menu;
     private GameObject prevMenu;
     private GameObject inventory;
-    private GameObject characterCustomize;
+    private GameObject character;
     private GameObject saves;
-
     private enum Confirmation { MainMenu, SaveLoad, Quit }
     private int saveNum;
     private Confirmation confirmAction;
     private GameObject confirmation;
 
-    private GameObject classSelect;
-    private Class[] charClasses;
-    private int classIndex;
+    private TextMeshProUGUI characterLevelText;
+    private TextMeshProUGUI characterClassText;
+    private RectTransform characterHpBar;
+    private TextMeshProUGUI characterHpText;
+    private RectTransform characterSpBar;
+    private TextMeshProUGUI characterSpText;
+    private RectTransform characterExpBar;
+    private TextMeshProUGUI characterExpText;
+    private TextMeshProUGUI characterStrText;
+    private TextMeshProUGUI characterConText;
+    private TextMeshProUGUI characterSprText;
 
     private enum SaveState { Save, Load }
     private SaveState saveloadMode;
@@ -37,9 +50,21 @@ public class MenuButtonController : MonoBehaviour {
             // Playing game
             menu = transform.Find("Menu").gameObject;
             inventory = transform.Find("Inventory").gameObject;
-            characterCustomize = transform.Find("CharacterCustomize").gameObject;
+            character = transform.Find("Character").gameObject;
             saves = transform.Find("SavegameMenu").gameObject;
             confirmation = transform.Find("ConfirmationWindow").gameObject;
+
+            characterLevelText = character.transform.Find("Stats").Find("Level").gameObject.GetComponent<TextMeshProUGUI>();
+            characterClassText = character.transform.Find("Stats").Find("Class").gameObject.GetComponent<TextMeshProUGUI>();
+            characterHpBar = character.transform.Find("Stats").Find("HPBar").Find("Bar").gameObject.GetComponent<RectTransform>();
+            characterHpText = character.transform.Find("Stats").Find("HPBar").Find("HPLabel").gameObject.GetComponent<TextMeshProUGUI>();
+            characterSpBar = character.transform.Find("Stats").Find("SPBar").Find("Bar").gameObject.GetComponent<RectTransform>();
+            characterSpText = character.transform.Find("Stats").Find("SPBar").Find("SPLabel").gameObject.GetComponent<TextMeshProUGUI>();
+            characterExpBar = character.transform.Find("Stats").Find("ExpBar").Find("Bar").gameObject.GetComponent<RectTransform>();
+            characterExpText = character.transform.Find("Stats").Find("ExpBar").Find("ExpLabel").gameObject.GetComponent<TextMeshProUGUI>();
+            characterStrText = character.transform.Find("Stats").Find("Stats").Find("Str").Find("Value").gameObject.GetComponent<TextMeshProUGUI>();
+            characterConText = character.transform.Find("Stats").Find("Stats").Find("Con").Find("Value").gameObject.GetComponent<TextMeshProUGUI>();
+            characterSprText = character.transform.Find("Stats").Find("Stats").Find("Spr").Find("Value").gameObject.GetComponent<TextMeshProUGUI>();
         }
     }
 
@@ -131,9 +156,23 @@ public class MenuButtonController : MonoBehaviour {
         inventory.SetActive(true);
     }
 
-    public void OpenCharacterCustomize() {
+    public void OpenCharacterScreen() {
         HideMenu();
-        characterCustomize.SetActive(true);
+
+        // Update character screen
+        characterLevelText.text = "Level: " + GameData.playerStats.level;
+        characterClassText.text = "Class: " + GameData.playerStats.playerClass.className;
+        characterHpText.text = GameData.playerStats.health + "/" + GameData.playerStats.maxHealth;
+        characterSpText.text = GameData.playerStats.sp + "/" + GameData.playerStats.maxSp;
+        characterExpText.text = GameData.playerStats.exp / GameData.playerStats.maxExp + "%";
+        characterStrText.text = "" + GameData.playerStats.str;
+        characterConText.text = "" + GameData.playerStats.con;
+        characterSprText.text = "" + GameData.playerStats.spr;
+        Utils.SetRectRight(characterHpBar, Utils.CalculateRectRight(GameData.playerStats.health, GameData.playerStats.maxHealth, 160, -110));
+        Utils.SetRectRight(characterSpBar, Utils.CalculateRectRight(GameData.playerStats.sp, GameData.playerStats.maxSp, 160, -110));
+        Utils.SetRectRight(characterExpBar, Utils.CalculateRectRight(GameData.playerStats.exp, GameData.playerStats.maxExp, 160, -110));
+
+        character.SetActive(true);
     }
 
     public void SaveLoadGame(int saveNum) {

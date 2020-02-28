@@ -10,19 +10,19 @@
             "drops": [
                 {
                     "name": "Wooden Sword",
-                    "chance": 20
+                    "chance": 15
                 },
                 {
                     "name": "Wooden Staff",
-                    "chance": 20
+                    "chance": 15
                 },
                 {
                     "name": "Small HP Potion",
-                    "chance": 33
+                    "chance": 40
                 },
                 {
                     "name": "Small SP Potion",
-                    "chance": 33
+                    "chance": 40
                 }
             ]
         }

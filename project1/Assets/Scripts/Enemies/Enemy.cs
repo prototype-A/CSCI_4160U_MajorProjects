@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 
 ﻿[System.Serializable]
 public class Enemy {
@@ -25,15 +26,20 @@ public class Enemy {
         return this.dmgBase + (this.dmgPerLvl * (this.level - 1));
     }
 
-    public string[] GetDrops() {
-        ArrayList droppedItems = new ArrayList();
+    public Dictionary<string, int> GetDrops() {
+        Dictionary<string, int> droppedItems = new Dictionary<string, int>();
         foreach (ItemDrop drop in drops) {
             if (rngesus.Next(101) <= drop.chance) {
-                droppedItems.Add(drop.name);
+                // Item dropped
+                if (droppedItems.ContainsKey(drop.name)) {
+                    droppedItems[drop.name]++;
+                } else {
+                    droppedItems.Add(drop.name, 1);
+                }
             }
         }
 
-        return (string[])droppedItems.ToArray(typeof(string));
+        return droppedItems;
     }
 
     public float GetExpGain() {

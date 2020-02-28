@@ -32,6 +32,9 @@ public class BattleInterface : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
+        // Player sprite will sometimes show up in battle scene
+        GameData.playerSprite.SetActive(false);
+
         levelLabel = transform.Find("PlayerInfo").Find("LevelLabel").gameObject.GetComponent<TextMeshProUGUI>();
         hpBar = transform.Find("PlayerInfo").Find("Stats").Find("HPBar").Find("Bar").gameObject.GetComponent<RectTransform>();
         spBar = transform.Find("PlayerInfo").Find("Stats").Find("SPBar").Find("Bar").gameObject.GetComponent<RectTransform>();
@@ -64,6 +67,16 @@ public class BattleInterface : MonoBehaviour {
         SetLogText("Encountered a " + enemyLabel.text + "!");
     }
 
+    public void SetActiveAction(int newAction) {
+        prevAction = currAction;
+        currAction = newAction;
+
+        // Unselect previous action
+        actionsText[prevAction].text = "";
+        // Select active action
+        actionsText[currAction].text = ">";
+    }
+
     // Update is called once per frame
     void Update() {
         // Player's turn
@@ -71,22 +84,16 @@ public class BattleInterface : MonoBehaviour {
             // Key press
             if (Input.GetButtonDown("Up")) {
                 if (currAction > 0) {
-                    prevAction = currAction;
-                    currAction--;
-
                     // Update currently selected action
-                    SetActiveAction();
+                    SetActiveAction(currAction - 1);
                 }
             } else if (Input.GetButtonDown("Down")) {
                 if (currAction < actionsText.Length - 1) {
-                    prevAction = currAction;
-                    currAction++;
-
                     // Update currently selected action
-                    SetActiveAction();
+                    SetActiveAction(currAction + 1);
                 }
-            } else if (Input.GetButtonDown("Submit")) {
-                // Action
+            } else if (Input.GetButtonDown("Submit") || Input.GetMouseButtonDown(0)) {
+                // 'Enter' pressed or mouse left-click
                 switch((Actions)currAction) {
                     case Actions.Attack:
                         // Attack enemy
@@ -97,13 +104,13 @@ public class BattleInterface : MonoBehaviour {
                         Invoke("EnemyMove", WAIT_TIME);
                         break;
                     case Actions.Skill:
-                        Debug.Log("Skill");
+                        ShowSkills();
                         break;
                     case Actions.Item:
-                        Debug.Log("Items");
+                        ShowUsableItems();
                         break;
                     case Actions.Run:
-                        Debug.Log("Run");
+                        Run();
                         break;
                 }
 
@@ -113,35 +120,43 @@ public class BattleInterface : MonoBehaviour {
     }
 
     private void ShowSkills() {
-
+        Debug.Log("Skill");
+        playersTurn = !playersTurn;
     }
 
-    private void ShowItems() {
-
+    private void ShowUsableItems() {
+        Debug.Log("Items");
+        playersTurn = !playersTurn;
     }
 
     private void Run() {
+        // Run from battle
         SetLogText("Successfully escaped!");
         Invoke("UnloadScene", WAIT_TIME);
     }
 
-    private void UnloadScene() {
-        SceneManager.UnloadSceneAsync("EnemyBattle");
-        GameData.inBattle = false;
-    }
-
     private void EnemyMove() {
         if (this.enemy.hp <= 0) {
-            // Unload battle scene when enemy dies
             SetLogText("The " + enemyLabel.text + " died!");
-            Invoke("UnloadScene", WAIT_TIME);
+
+            // Player gains exp
+            float expGain = this.enemy.GetExpGain();
+            SetLogText("You gained " + expGain + " experience points!");
+            if (GameData.playerStats.GainExp(expGain)) {
+                // Player levelled up
+                AppendLogText("\nYou levelled up!");
+            }
+
+            // Give player monster drops and unload the scene
+            Invoke("GetDrops", WAIT_TIME);
         } else {
+            // Enemy attacks player
             EnemyAttack();
         }
     }
 
     private void EnemyAttack() {
-        // Enemy makes move (attack)
+        // Enemy makes a move (attack)
         SetLogText(this.enemy.name + " attacks you!\n" +
                     "You took " + GameData.playerStats.TakeDamage(this.enemy.Attack()) +
                     " damage!");
@@ -150,62 +165,57 @@ public class BattleInterface : MonoBehaviour {
         playersTurn = !playersTurn;
     }
 
+    private void GetDrops() {
+        // Give player the monster drops
+        Dictionary<string, int> drops = this.enemy.GetDrops();
+        if (drops.Count > 0) {
+            SetLogText("You obtained the following items: ");
+            string[] dropNames = new string[drops.Count];
+            drops.Keys.CopyTo(dropNames, 0);
+            for (int i = 0; i < dropNames.Length; i++) {
+                AppendLogText(drops[dropNames[i]] + "x " + dropNames[i]);
+                if (i < dropNames.Length - 1) {
+                    AppendLogText(", ");
+                }
+            }
+        }
+
+        // Unload battle scene
+        Invoke("UnloadScene", WAIT_TIME + (float)(drops.Count * 0.75));
+    }
+
+    private void UnloadScene() {
+        // Remove battle scene
+        SceneManager.UnloadSceneAsync("EnemyBattle");
+        GameData.inBattle = false;
+        GameData.playerSprite.SetActive(true);
+    }
+
     private void UpdateUI() {
         // Update enemy UI
-        float enemyHpBarOffset = 175 - (this.enemy.hp / this.enemy.maxHp) * 250;
-        SetRight(this.enemyHpBar, enemyHpBarOffset);
+        Utils.SetRectRight(this.enemyHpBar, Utils.CalculateRectRight(this.enemy.hp, this.enemy.maxHp, 175, -75));
 
         // Update own UI
         this.levelLabel.text = "Level " + GameData.playerStats.level;
         this.hpLabel.text = GameData.playerStats.health + "/" + GameData.playerStats.maxHealth;
         this.spLabel.text = GameData.playerStats.sp + "/" + GameData.playerStats.maxSp;
-        float hpBarOffset = 120 - (GameData.playerStats.health / GameData.playerStats.maxHealth) * 180;
-        float spBarOffset = 120 - (GameData.playerStats.sp / GameData.playerStats.maxSp) * 180;
-        SetRight(this.hpBar, hpBarOffset);
-        SetRight(this.spBar, spBarOffset);
-    }
-
-    private void SetLeft(RectTransform rect, float left) {
-        rect.offsetMin = new Vector2(left, rect.offsetMin.y);
-    }
-
-    private void SetRight(RectTransform rect, float right) {
-        rect.offsetMax = new Vector2(-right, rect.offsetMax.y);
-    }
-
-    private void SetTop(RectTransform rect, float top) {
-        rect.offsetMax = new Vector2(rect.offsetMax.x, -top);
-    }
-
-    private void SetBottom(RectTransform rect, float bottom) {
-        rect.offsetMin = new Vector2(rect.offsetMin.x, bottom);
-    }
-
-    private float GetLeft(RectTransform rect) {
-        return rect.offsetMin.x;
-    }
-
-    private float GetRight(RectTransform rect) {
-        return -rect.offsetMax.x;
-    }
-
-    private float GetTop(RectTransform rect) {
-        return -rect.offsetMax.y;
-    }
-
-    private float GetBottom(RectTransform rect) {
-        return rect.offsetMin.y;
-    }
-
-    private void SetActiveAction() {
-        // Select active action
-        actionsText[currAction].text = ">";
-        // Unselect previous action
-        actionsText[prevAction].text = "";
+        Utils.SetRectRight(this.hpBar, Utils.CalculateRectRight(GameData.playerStats.health, GameData.playerStats.maxHealth, 120, -60));
+        Utils.SetRectRight(this.spBar, Utils.CalculateRectRight(GameData.playerStats.sp, GameData.playerStats.maxSp, 120, -60));
     }
 
     private void SetLogText(string text) {
+        // Sets the text of the battle scene log
         this.logText.text = text;
+    }
+
+    private void AppendLogText(string textToAppend) {
+        // Appends textToAppend to the text of the battle scene log
+        this.logText.text = GetLogText() + textToAppend;
+    }
+
+    private string GetLogText() {
+        // Returns the text of the battle scene log
+        return this.logText.text;
     }
 
 }
