@@ -65,9 +65,11 @@ public class MenuButtonController : MonoBehaviour {
             characterStrText = character.transform.Find("Stats").Find("Stats").Find("Str").Find("Value").gameObject.GetComponent<TextMeshProUGUI>();
             characterConText = character.transform.Find("Stats").Find("Stats").Find("Con").Find("Value").gameObject.GetComponent<TextMeshProUGUI>();
             characterSprText = character.transform.Find("Stats").Find("Stats").Find("Spr").Find("Value").gameObject.GetComponent<TextMeshProUGUI>();
+
+            // Load save data, if any
+            GameData.LoadSaveData();
         }
     }
-
 
     // Class selection functions
     public void ShowClassSelect() {
@@ -127,7 +129,9 @@ public class MenuButtonController : MonoBehaviour {
     }
 
     public void CloseMenu() {
-        HideMenu();
+        try {
+            HideMenu();
+        } catch {}
         inMenu = false;
         inMenuScreen = false;
     }
@@ -194,7 +198,7 @@ public class MenuButtonController : MonoBehaviour {
                 SetConfirmationYesButtonText("Save");
                 SetConfirmationBodyText("You are about to overwrite a saved game. By overwriting it, you will lose all data in that save. Are you sure you want to continue saving?");
                 ShowConfirmation("Overwrite save?");
-            } else if (confirmed) {
+            } else {
                 Debug.Log("Saving game to \"" + savePath + "\"");
 
                 // Create save
@@ -230,12 +234,17 @@ public class MenuButtonController : MonoBehaviour {
                     // Player confirmed to load
                     Debug.Log("Loading game from \"" + savePath + "\"");
 
-                    // Load and restore save data
-                    GameSave gameSave = LoadSave(savePath);
-                    GameData.playerStats = gameSave.playerStats;
+                    // Load save data
+                    GameData.gameSave = LoadSave(savePath);
 
-
-                    Debug.Log("Save loaded");
+                    // Switch scenes if in main menu
+                    if (SceneManager.GetActiveScene().name == "MainMenu") {
+                        // Load game scene and then restore save data
+                        SceneManager.LoadScene("PlayGame");
+                    } else {
+                        // Restore save data if in game
+                        GameData.LoadSaveData();
+                    }
                 } else if (!confirmed) {
                     // Show confirmation to load save if in game
                     this.saveNum = saveNum;
@@ -251,6 +260,10 @@ public class MenuButtonController : MonoBehaviour {
                 Debug.Log("No save found in profile " + saveNum);
             }
         }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+
     }
 
     private void ResetSaveLoadPosition() {
@@ -327,12 +340,11 @@ public class MenuButtonController : MonoBehaviour {
     }
 
     public void LoadMainMenu() {
-        Debug.Log("Loading main menu");
-        //SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("MainMenu");
     }
 
     public void QuitGame() {
-        Debug.Log("Quitting game");
+        Application.Quit(0);
     }
 
     // Confirmation window functions
@@ -384,5 +396,9 @@ public class MenuButtonController : MonoBehaviour {
             // Quit game
             QuitGame();
         }
+
+        // Hide confirmation window
+        confirmation.SetActive(false);
+        CloseMenu();
     }
 }

@@ -1,7 +1,5 @@
 public static class ItemGenerator {
 
-    // Item database
-
     public static Consumable CreateConsumable(string name) {
         return GameData.consumables[name];
     }
