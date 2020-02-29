@@ -17,7 +17,6 @@ public static class GameData {
     public static Classes playableClasses = JsonUtility.FromJson<Classes>(classJson.text);
     public static Class[] playerClasses = playableClasses.classes;
     public static PlayerData playerData;
-    public static Inventory playerInventory;
     public static bool inBattle;
     public static Transform playerSprite;
     public static GameSave gameSave;
@@ -33,8 +32,7 @@ public static class GameData {
 
 
     public static void CreateNewData(string chosenClass) {
-        playerData = new PlayerData(chosenClass);
-        playerInventory = new Inventory();
+        playerData = new PlayerData(chosenClass, playerSprite.transform.Find("GUI").Find("Inventory"));
         floorLevel = 0;
     }
 

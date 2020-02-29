@@ -74,6 +74,13 @@ public class MenuButtonController : MonoBehaviour {
         }
     }
 
+    void Update() {
+        // Press any key at death scene to return to main menu
+        if (Input.anyKey) {
+            SceneManager.LoadScene("MainMenu");
+        }
+    }
+
     // Class selection functions
     public void ShowClassSelect() {
         // Load classes
@@ -164,11 +171,9 @@ public class MenuButtonController : MonoBehaviour {
     }
 
     public void OpenInventory() {
+        // Open the inventory
         HideMenu();
         inventory.SetActive(true);
-
-        // Update inventory
-
     }
 
     public void OpenCharacterScreen() {

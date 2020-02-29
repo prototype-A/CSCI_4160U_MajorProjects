@@ -275,8 +275,20 @@ public class BattleInterface : MonoBehaviour {
                     "You took " + GameData.playerData.TakeDamage(this.enemy.Attack()) +
                     " damage!");
         UpdateUI();
-        // Switch turns
-        playersTurn = !playersTurn;
+
+        if (GameData.playerData.health <= 0) {
+            // Player died
+            AppendLogText("\nYou died!");
+
+            Invoke("ShowDeathScene", WAIT_TIME);
+        } else {
+            // Switch turns
+            playersTurn = !playersTurn;
+        }
+    }
+
+    private void ShowDeathScene() {
+        SceneManager.LoadScene("DeathScene");
     }
 
     private void GetDrops() {

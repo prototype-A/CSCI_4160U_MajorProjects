@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 [System.Serializable]
 public class PlayerData {
@@ -18,9 +19,9 @@ public class PlayerData {
     public int con;
     public int spr;
 
-    public PlayerData(string chosenClass) {
+    public PlayerData(string chosenClass, Transform inventoryPanel) {
         playerClass = GameData.playableClasses.GetDict()[chosenClass];
-        playerInventory = new Inventory();
+        playerInventory = new Inventory(30, inventoryPanel);
         this.level = 1;
         this.exp = 0;
         UpdateStats(true);
