@@ -15,6 +15,7 @@ public class MenuButtonController : MonoBehaviour {
     // UI
     private bool inMenu = false;
     private bool inMenuScreen = false;
+    private TextMeshProUGUI floorIndicator;
     private GameObject menu;
     private GameObject prevMenu;
     private GameObject inventory;
@@ -49,6 +50,7 @@ public class MenuButtonController : MonoBehaviour {
             classSelect = transform.Find("ClassSelect").gameObject;
         } else if (SceneManager.GetActiveScene().name == "PlayGame") {
             // Playing game
+            floorIndicator = transform.Find("HUD").Find("FloorIndicator").Find("Text").gameObject.GetComponent<TextMeshProUGUI>();
             menu = transform.Find("Menu").gameObject;
             inventory = transform.Find("Inventory").gameObject;
             characterScreen = transform.Find("Character").gameObject;
@@ -101,11 +103,16 @@ public class MenuButtonController : MonoBehaviour {
     }
 
     public void PlayGame() {
-        // Start new game
+        // Start game
         string chosenClass = classSelect.transform.Find("Selection").Find("ClassText").gameObject.GetComponent<TextMeshProUGUI>().text;
-        GameData.playerData = new PlayerData(chosenClass);
-        GameData.playerInventory = new Inventory();
+        GameData.CreateNewData(chosenClass);
         SceneManager.LoadScene("PlayGame");
+    }
+
+
+    // HUD functions
+    public void UpdateHUD() {
+        this.floorIndicator.text = "Floor: " + GameData.floorLevel + "F";
     }
 
 
@@ -205,21 +212,7 @@ public class MenuButtonController : MonoBehaviour {
             } else {
                 //Debug.Log("Saving game to \"" + savePath + "\"");
 
-                // Create save
-                GameObject[] rootObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
-                GameObject player = null;
-                FloorGenerator floorGenerator = null;
-                for (int obj = 0; obj < rootObjects.Length; obj++) {
-                    if (rootObjects[obj].name == "Player") {
-                        player = rootObjects[obj].gameObject;
-                    } else if (rootObjects[obj].name == "Map") {
-                        floorGenerator = rootObjects[obj].gameObject.GetComponent<FloorGenerator>();
-                    }
-                }
-                Vector3 currPlayerPos = player.transform.position;
-                float[] playerPos = {currPlayerPos.x, currPlayerPos.y, currPlayerPos.z};
-                GameSave gameSave = new GameSave(playerPos, floorGenerator.terrainMap);
-                SaveGame(savePath, gameSave);
+                SaveGameToFile(savePath, GameData.CreateSaveGame());
 
                 if (prevMenu == saves) {
                     // Return to save menu after confirming to overwrite save
@@ -239,7 +232,7 @@ public class MenuButtonController : MonoBehaviour {
                     //Debug.Log("Loading game from \"" + savePath + "\"");
 
                     // Load save data
-                    GameData.gameSave = LoadSave(savePath);
+                    GameData.gameSave = LoadSaveFromFile(savePath);
 
                     // Switch scenes if in main menu
                     if (SceneManager.GetActiveScene().name == "MainMenu") {
@@ -278,26 +271,25 @@ public class MenuButtonController : MonoBehaviour {
         // Show saved class and save date if save data exists for profile
         Transform saveProfiles = saves.transform.Find("Scroll Viewport").Find("Saves");
         int numProfiles = saveProfiles.childCount;
-        for (int save = 1; save < numProfiles + 1; save++) {
+        for (int save = 1; save <= numProfiles; save++) {
             string savePath = Application.persistentDataPath + "/Save" + (save - 1) + ".sav";
             // Check if "Save#.sav" exists for profile number #
             if (File.Exists(savePath)) {
-                GameSave gameSave = LoadSave(savePath);
+                // Save found
+                GameSave gameSave = LoadSaveFromFile(savePath);
                 saveProfiles.Find("Save" + save).Find("NoSave").gameObject.SetActive(false);
+                saveProfiles.Find("Save" + save).Find("SaveData").gameObject.SetActive(true);
                 saveProfiles.Find("Save" + save).Find("SaveData").Find("SavedClass").gameObject.GetComponent<TextMeshProUGUI>().text = gameSave.playerData.playerClass.className;
                 saveProfiles.Find("Save" + save).Find("SaveData").Find("DateSaved").gameObject.GetComponent<TextMeshProUGUI>().text = gameSave.saveDate;
-                saveProfiles.Find("Save" + save).Find("SaveData").gameObject.SetActive(true);
             } else {
-                try {
-                    // TODO: Why does this fail only on the last profile?
-                    saveProfiles.Find("Save" + save).Find("SaveData").gameObject.SetActive(false);
-                } catch {}
+                // Save not found
+                saveProfiles.Find("Save" + save).Find("SaveData").gameObject.SetActive(false);
                 saveProfiles.Find("Save" + save).Find("NoSave").gameObject.SetActive(true);
             }
         }
     }
 
-    private void SaveGame(string savePath, GameSave gameSave) {
+    private void SaveGameToFile(string savePath, GameSave gameSave) {
         // Write save to binary file
         BinaryFormatter binFormatter = new BinaryFormatter();
         FileStream saveFile = File.Create(savePath);
@@ -305,7 +297,7 @@ public class MenuButtonController : MonoBehaviour {
         saveFile.Close();
     }
 
-    private GameSave LoadSave(string savePath) {
+    private GameSave LoadSaveFromFile(string savePath) {
         // Read game save from binary
         BinaryFormatter binFormatter = new BinaryFormatter();
         FileStream saveFile = File.Open(savePath, FileMode.Open);

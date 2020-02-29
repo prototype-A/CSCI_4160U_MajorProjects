@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class PlayerData {
 
     public Class playerClass;
-    public Inventory playerInventory { get; }
+    public Inventory playerInventory;
 
     public int level;
     public float health;

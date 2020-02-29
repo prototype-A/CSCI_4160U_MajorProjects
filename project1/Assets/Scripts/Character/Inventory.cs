@@ -6,6 +6,11 @@ using System.Linq;
 [System.Serializable]
 ﻿public class Inventory {
 
+    //private List items;
+    //private List newItems;
+
+
+    /*
     private readonly int INVENTORY_SIZE = 30;
     private ObservableCollection<KeyValuePair<string, Item>> items;
 
@@ -71,10 +76,10 @@ using System.Linq;
             // Move the other item to where the item that moved originally was
             items.SetItem(origIndex, otherItem);
         }
-        */
     }
 
     public void DropItem(string name, int count) {
 
     }
+    */
 }

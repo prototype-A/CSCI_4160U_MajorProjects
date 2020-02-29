@@ -44,8 +44,9 @@ public class BattleInterface : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         // Disable player sprite and cave GUI
-        GameData.playerSprite.SetActive(false);
-        GameData.playerGui.SetActive(false);
+        GameData.playerSprite.gameObject.SetActive(false);
+        GameData.playerSprite.GetComponent<PlayerController>().gui.SetActive(false);
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName("EnemyBattle"));
 
         rngesus = new System.Random();
         levelLabel = transform.Find("PlayerInfo").Find("LevelLabel").gameObject.GetComponent<TextMeshProUGUI>();
@@ -243,6 +244,7 @@ public class BattleInterface : MonoBehaviour {
 
     private void Run() {
         // Run from battle
+        playersTurn = !playersTurn;
         SetLogText("Successfully escaped from the " + this.enemyLabel.text + "!");
         Invoke("UnloadScene", WAIT_TIME);
     }
@@ -299,10 +301,11 @@ public class BattleInterface : MonoBehaviour {
 
     private void UnloadScene() {
         // Remove battle scene
-        SceneManager.UnloadSceneAsync("EnemyBattle");
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName("PlayGame"));
         GameData.inBattle = false;
-        GameData.playerSprite.SetActive(true);
-        GameData.playerGui.SetActive(true);
+        GameData.playerSprite.gameObject.SetActive(true);
+        GameData.playerSprite.GetComponent<PlayerController>().gui.SetActive(true);
+        SceneManager.UnloadSceneAsync("EnemyBattle");
     }
 
     private void UpdateUI() {

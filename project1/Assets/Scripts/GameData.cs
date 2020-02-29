@@ -19,9 +19,12 @@ public static class GameData {
     public static PlayerData playerData;
     public static Inventory playerInventory;
     public static bool inBattle;
-    public static GameObject playerSprite;
-    public static GameObject playerGui;
+    public static Transform playerSprite;
     public static GameSave gameSave;
+
+    // Map
+    public static int floorLevel = 0;
+    public static Transform map;
 
     // Items
     public static Dictionary<string, Consumable> consumables = JsonUtility.FromJson<Consumables>(consumablesJson.text).GetDict();
@@ -29,39 +32,58 @@ public static class GameData {
     public static Prefix[] weaponPrefixes = JsonUtility.FromJson<Weapons>(weaponJson.text).prefixes;
 
 
+    public static void CreateNewData(string chosenClass) {
+        playerData = new PlayerData(chosenClass);
+        playerInventory = new Inventory();
+        floorLevel = 0;
+    }
+
+    public static GameSave CreateSaveGame() {
+        // Create game save to be written to file
+        GameObject[] rootObjects = GetSceneRootObjects();
+        GameObject player = null;
+        FloorGenerator floorGenerator = null;
+        for (int obj = 0; obj < rootObjects.Length; obj++) {
+            if (rootObjects[obj].name == "Player") {
+                player = rootObjects[obj].gameObject;
+            } else if (rootObjects[obj].name == "Map") {
+                floorGenerator = rootObjects[obj].gameObject.GetComponent<FloorGenerator>();
+            }
+        }
+        Vector3 currPlayerPos = player.transform.position;
+        float[] playerPos = {currPlayerPos.x, currPlayerPos.y, currPlayerPos.z};
+        GameSave gameSave = new GameSave(playerData, floorLevel, playerPos, floorGenerator.terrainMap);
+
+        return gameSave;
+    }
+
     public static void LoadSaveData() {
         // Get objects at root of scene
-        GameObject[] rootObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
+        GameObject[] rootObjects = GetSceneRootObjects();
+        for (int i = 0; i < rootObjects.Length; i++) {
+            if (rootObjects[i].name == "Map") {
+                map = rootObjects[i].transform;
+            } else if (rootObjects[i].name == "Player") {
+                playerSprite = rootObjects[i].transform;
+            }
+        }
 
         if (gameSave != null) {
             // Restore game savedata
             playerData = gameSave.playerData;
-            Transform map = null;
-            Transform player = null;
-            for (int i = 0; i < rootObjects.Length; i++) {
-                if (rootObjects[i].name == "Map") {
-                    map = rootObjects[i].transform;
-                } else if (rootObjects[i].name == "Player") {
-                    player = rootObjects[i].transform;
-                }
-            }
+            floorLevel = gameSave.floorLevel;
             map.Find("Ground").gameObject.GetComponent<Tilemap>().ClearAllTiles();
             map.Find("Chasm").gameObject.GetComponent<Tilemap>().ClearAllTiles();
+            map.Find("Treasure").gameObject.GetComponent<Tilemap>().ClearAllTiles();
+            map.Find("Door").gameObject.GetComponent<Tilemap>().ClearAllTiles();
             FloorGenerator floorGenerator = map.gameObject.GetComponent<FloorGenerator>();
             floorGenerator.terrainMap = gameSave.terrainMap;
             floorGenerator.FillTiles();
-            player.position = new Vector3(gameSave.playerPos[0], gameSave.playerPos[1], gameSave.playerPos[2]);
+            playerSprite.position = new Vector3(gameSave.playerPos[0], gameSave.playerPos[1], gameSave.playerPos[2]);
             gameSave = null;
         } else {
             // Generate a map if there is no savedata to load
-            GameObject map = null;
-            for (int i = 0; i < rootObjects.Length; i++) {
-                if (rootObjects[i].name == "Map") {
-                    map = rootObjects[i];
-                    break;
-                }
-            }
-            map.GetComponent<FloorGenerator>().generateMap();
+            map.GetComponent<FloorGenerator>().GenerateNewFloor();
         }
     }
 
@@ -80,5 +102,10 @@ public static class GameData {
         }
 
         return new Weapon(baseWeapon, prefix);
+    }
+
+    public static GameObject[] GetSceneRootObjects() {
+        // Returns an array of GameObjects in the root of the current scene
+        return UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();;
     }
 }

@@ -23,29 +23,17 @@ public class PlayerController : MonoBehaviour {
     void Start() {
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
-
-        GameData.playerSprite = this.transform.gameObject;
-        GameData.playerGui = this.transform.Find("GUI").gameObject;
     }
 
-    private void EnterBattle() {
-        if (this.battleChance >= 100.0f) {
-            // Battle enemy
-            this.battleChance = 0.0f;
-            hInput = 0.0f;
-            vInput = 0.0f;
-            BattleEnemy();
-        } else {
-            // Increase chance for enemy battle
-            System.Random rngesus = new System.Random();
-            this.battleChance += rngesus.Next(11) * battleChanceModifier;
+    void FixedUpdate() {
+        if (hInput != 0 || vInput != 0) {
+            // Increase chance to battle enemy with every step
+            EnterBattle();
         }
     }
 
-    private void BattleEnemy() {
-        // Battle an enemy
-        SceneManager.LoadScene("EnemyBattle", LoadSceneMode.Additive);
-        GameData.inBattle = true;
+    void OnTriggerEnter2D(Collider2D collider) {
+        Debug.Log("Collided with a " + collider.gameObject.name + "!");
     }
 
     // Update is called once per frame
@@ -107,10 +95,25 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    void FixedUpdate() {
-        if (hInput != 0 || vInput != 0) {
-            // Increase chance to battle enemy with every step
-            EnterBattle();
+    private void EnterBattle() {
+        if (this.battleChance >= 100.0f) {
+            // Battle enemy
+            this.battleChance = 0.0f;
+            hInput = 0.0f;
+            vInput = 0.0f;
+            BattleEnemy();
+        } else {
+            // Increase chance for enemy battle
+            System.Random rngesus = new System.Random();
+            this.battleChance += rngesus.Next(11) * battleChanceModifier;
         }
     }
+
+    private void BattleEnemy() {
+        // Battle an enemy
+        SceneManager.LoadScene("EnemyBattle", LoadSceneMode.Additive);
+        GameData.inBattle = true;
+    }
+
+
 }
