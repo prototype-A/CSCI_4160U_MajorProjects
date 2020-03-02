@@ -43,9 +43,8 @@ public class BattleInterface : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        // Disable player sprite and cave GUI
-        GameData.playerSprite.gameObject.SetActive(false);
-        GameData.playerSprite.GetComponent<PlayerController>().gui.SetActive(false);
+        // Disable cave GUI rendering
+        GameData.playerSprite.transform.Find("GUI").gameObject.GetComponent<Canvas>().enabled = false;
         SceneManager.SetActiveScene(SceneManager.GetSceneByName("EnemyBattle"));
 
         rngesus = new System.Random();
@@ -84,34 +83,9 @@ public class BattleInterface : MonoBehaviour {
     private void GenerateEnemy() {
         // Generate a random enemy to fight up to 10 levels above/below player level
         this.enemy = GameData.enemies[rngesus.Next(GameData.enemies.Length)];
-        this.enemy.SetLevel(GameData.playerData.level);
+        this.enemy.SetStats(GameData.playerData.level);
         enemyLabel.text = "Lv." + this.enemy.level + " " + this.enemy.name;
         SetLogText("Encountered a " + enemyLabel.text + "!");
-    }
-
-    public void SetActiveAction(int newAction) {
-        if (!usingCenterPanel && playersTurn) {
-            prevAction = currAction;
-            currAction = newAction;
-
-            // Unselect previous action
-            actionsText[prevAction].text = "";
-            // Select active action
-            actionsText[currAction].text = ">";
-        }
-    }
-
-    public void SetActiveCenterPanelAction(int newAction) {
-        if (skillsItemsText[newAction].text != "") {
-            // Only select available items/skills
-            prevSkillItemAction = skillItemAction;
-            skillItemAction = newAction;
-
-            // Unselect previous action
-            skillsItemsSelectors[prevSkillItemAction].text = "";
-            // Select active action
-            skillsItemsSelectors[skillItemAction].text = ">";
-        }
     }
 
     // Update is called once per frame
@@ -238,8 +212,11 @@ public class BattleInterface : MonoBehaviour {
     }
 
     private void ShowUsableItems() {
-        Debug.Log("Items");
-        playersTurn = !playersTurn;
+        // No items to use
+        skillItemAction = -1;
+        prevSkillItemAction = -1;
+        SetActiveCenterPanelAction(skillItemAction);
+        LogControl(true);
     }
 
     private void Run() {
@@ -287,19 +264,27 @@ public class BattleInterface : MonoBehaviour {
         }
     }
 
-    private void ShowDeathScene() {
-        SceneManager.LoadScene("DeathScene");
-    }
-
     private void GetDrops() {
-        // Give player the monster drops
+        // Determine the monster drops
         Dictionary<string, int> drops = this.enemy.GetDrops();
         if (drops.Count > 0) {
             SetLogText("You obtained the following items: ");
+
             string[] dropNames = new string[drops.Count];
             drops.Keys.CopyTo(dropNames, 0);
             for (int i = 0; i < dropNames.Length; i++) {
-                AppendLogText(drops[dropNames[i]] + "x " + dropNames[i]);
+
+                int amount = drops[dropNames[i]];
+                Item item = GameData.GetItemByName(dropNames[i], amount);
+                AppendLogText(amount + "x " + item.name);
+
+                // Add item to inventory
+                if (!GameData.inventoryManager.AddItem(item, amount)) {
+                    // Failed to add item to inventory
+                    AppendLogText(" (did not receive one or all)");
+                } else {
+                    Debug.Log("Added " + amount + "x " + item.name + " to inventory");
+                }
                 if (i < dropNames.Length - 1) {
                     AppendLogText(", ");
                 }
@@ -311,12 +296,40 @@ public class BattleInterface : MonoBehaviour {
         Invoke("UnloadScene", WAIT_TIME + (float)(drops.Count * 0.75));
     }
 
+    public void SetActiveAction(int newAction) {
+        if (!usingCenterPanel && playersTurn) {
+            prevAction = currAction;
+            currAction = newAction;
+
+            // Unselect previous action
+            actionsText[prevAction].text = "";
+            // Select active action
+            actionsText[currAction].text = ">";
+        }
+    }
+
+    public void SetActiveCenterPanelAction(int newAction) {
+        if (skillsItemsText[newAction].text != "") {
+            // Only select available items/skills
+            prevSkillItemAction = skillItemAction;
+            skillItemAction = newAction;
+
+            // Unselect previous action
+            skillsItemsSelectors[prevSkillItemAction].text = "";
+            // Select active action
+            skillsItemsSelectors[skillItemAction].text = ">";
+        }
+    }
+
+    private void ShowDeathScene() {
+        SceneManager.LoadScene("DeathScene");
+    }
+
     private void UnloadScene() {
         // Remove battle scene
         SceneManager.SetActiveScene(SceneManager.GetSceneByName("PlayGame"));
         GameData.inBattle = false;
-        GameData.playerSprite.gameObject.SetActive(true);
-        GameData.playerSprite.GetComponent<PlayerController>().gui.SetActive(true);
+        GameData.playerSprite.transform.Find("GUI").gameObject.GetComponent<Canvas>().enabled = true;
         SceneManager.UnloadSceneAsync("EnemyBattle");
     }
 

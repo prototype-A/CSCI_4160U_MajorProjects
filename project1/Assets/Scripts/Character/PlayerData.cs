@@ -5,7 +5,8 @@ using UnityEngine;
 public class PlayerData {
 
     public Class playerClass;
-    public Inventory playerInventory;
+    public Item[] items;
+    public readonly int INVENTORY_SIZE = 30;
 
     public int level;
     public float health;
@@ -19,9 +20,14 @@ public class PlayerData {
     public int con;
     public int spr;
 
-    public PlayerData(string chosenClass, Transform inventoryPanel) {
+    public PlayerData(string chosenClass) {
         playerClass = GameData.playableClasses.GetDict()[chosenClass];
-        playerInventory = new Inventory(30, inventoryPanel);
+        items = new Item[this.INVENTORY_SIZE];
+        this.items = new Item[this.INVENTORY_SIZE];
+        for (int i = 0; i < this.INVENTORY_SIZE; i++) {
+            // Initialize empty inventory
+            this.items[i] = null;
+        }
         this.level = 1;
         this.exp = 0;
         UpdateStats(true);
@@ -29,15 +35,16 @@ public class PlayerData {
 
     public bool GainExp(float exp) {
         this.exp += exp;
-        if (this.exp >= this.maxExp) {
+        bool levelledUp = false;
+        while (this.exp >= this.maxExp) {
             // Level up
+            levelledUp = true;
             this.exp -= this.level * 10;
             this.level++;
             UpdateStats(true);
-            return true;
         }
 
-        return false;
+        return levelledUp;
     }
 
     public void UpdateStats(bool fullHeal = false) {
@@ -92,6 +99,7 @@ public class PlayerData {
     public int TakeDamage(int damage) {
         // Calculate damage taken
         int damageTaken = damage - this.con;
+
         if (damageTaken <= 0) {
             // Always take at least 1 damage
             damageTaken = 1;
@@ -103,11 +111,18 @@ public class PlayerData {
         if (this.health < 0) {
             // Dead
             this.health = 0;
-        } else if (this.health > this.maxHealth) {
-            // Overhealed
-            this.health = this.maxHealth;
         }
 
         return damageTaken;
+    }
+
+    public void Heal(int hitpoints) {
+        // Heal player
+        this.health += hitpoints;
+
+        if (this.health > this.maxHealth) {
+           // Overhealed
+           this.health = this.maxHealth;
+       }
     }
 }

@@ -46,7 +46,7 @@ public class Enemy {
         return this.level * 5;
     }
 
-    public void SetLevel(int playerLevel) {
+    public void SetStats(int playerLevel) {
         // Randomly set enemy level between 5 levels lower or high than player
         int range = 5;
         int rangeLow = ((playerLevel - range) <= 0) ? 1 : playerLevel - range;

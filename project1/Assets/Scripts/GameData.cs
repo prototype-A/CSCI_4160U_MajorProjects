@@ -19,6 +19,7 @@ public static class GameData {
     public static PlayerData playerData;
     public static bool inBattle;
     public static Transform playerSprite;
+    public static InventoryManager inventoryManager;
     public static GameSave gameSave;
 
     // Map
@@ -32,7 +33,7 @@ public static class GameData {
 
 
     public static void CreateNewData(string chosenClass) {
-        playerData = new PlayerData(chosenClass, playerSprite.transform.Find("GUI").Find("Inventory"));
+        playerData = new PlayerData(chosenClass);
         floorLevel = 0;
     }
 
@@ -70,6 +71,8 @@ public static class GameData {
             // Restore game savedata
             playerData = gameSave.playerData;
             floorLevel = gameSave.floorLevel;
+            playerSprite.transform.Find("GUI").gameObject.GetComponent<MenuButtonController>().UpdateHUD();
+            playerSprite.transform.Find("GUI").gameObject.GetComponent<InventoryManager>().LoadInventory(playerData.items);
             map.Find("Ground").gameObject.GetComponent<Tilemap>().ClearAllTiles();
             map.Find("Chasm").gameObject.GetComponent<Tilemap>().ClearAllTiles();
             map.Find("Treasure").gameObject.GetComponent<Tilemap>().ClearAllTiles();
@@ -83,6 +86,14 @@ public static class GameData {
             // Generate a map if there is no savedata to load
             map.GetComponent<FloorGenerator>().GenerateNewFloor();
         }
+    }
+
+    public static Item GetItemByName(string name, int amount) {
+        if (consumables.ContainsKey(name)) {
+            return new Consumable(GetConsumable(name), amount);
+        }
+
+        return GenerateWeapon(name);
     }
 
     public static Consumable GetConsumable(string name) {

@@ -9,7 +9,7 @@
             "dmgPerLvl": 3,
             "drops": [
                 {
-                    "name": "Wooden Sword",
+                    "name": "Sword",
                     "maxAmount": 1,
                     "chance": 15
                 },

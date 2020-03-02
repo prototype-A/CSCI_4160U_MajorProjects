@@ -76,7 +76,7 @@ public class MenuButtonController : MonoBehaviour {
 
     void Update() {
         // Press any key at death scene to return to main menu
-        if (Input.anyKey) {
+        if (SceneManager.GetActiveScene().name == "DeathScene" && Input.anyKey) {
             SceneManager.LoadScene("MainMenu");
         }
     }
@@ -215,13 +215,11 @@ public class MenuButtonController : MonoBehaviour {
                 SetConfirmationBodyText("You are about to overwrite a saved game. By overwriting it, you will lose all data in that save. Are you sure you want to continue saving?");
                 ShowConfirmation("Overwrite save?");
             } else {
-                //Debug.Log("Saving game to \"" + savePath + "\"");
-
                 SaveGameToFile(savePath, GameData.CreateSaveGame());
 
                 if (prevMenu == saves) {
                     // Return to save menu after confirming to overwrite save
-                    BackToMenu(confirmation);
+                    SetPreviousMenu(saves);
                 }
 
                 // Reload saves to show new save
@@ -257,9 +255,6 @@ public class MenuButtonController : MonoBehaviour {
                     SetConfirmationBodyText("You are about to load a saved game. Make sure you have saved your game, or you will lose all progress made.");
                     ShowConfirmation("Load game?");
                 }
-            } else {
-                // No save found
-                //Debug.Log("No save found in profile " + saveNum);
             }
         }
     }
@@ -395,7 +390,6 @@ public class MenuButtonController : MonoBehaviour {
         }
 
         // Hide confirmation window
-        confirmation.SetActive(false);
-        CloseMenu();
+        BackToMenu(confirmation);
     }
 }

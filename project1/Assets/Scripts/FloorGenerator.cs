@@ -51,6 +51,8 @@ public class FloorGenerator : MonoBehaviour {
 
     void Start() {
         rngesus = new System.Random();
+
+        GameData.map = transform;
     }
 
     public void GenerateNewFloor() {
