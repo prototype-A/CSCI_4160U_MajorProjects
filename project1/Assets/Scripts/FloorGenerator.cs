@@ -24,6 +24,7 @@ public class FloorGenerator : MonoBehaviour {
 
     private enum TileType { Chasm = 0, Floor = 1, Door = 2, Treasure = 3 }
     public Tilemap floorTilemap;
+    public Tilemap wallTilemap;
     public Tilemap treasureTilemap;
     public Tilemap doorTilemap;
     public Tilemap collisionTilemap;
@@ -32,6 +33,13 @@ public class FloorGenerator : MonoBehaviour {
     public Tile floorTile3;
     public Tile floorTile4;
     public Tile floorTile5;
+    public Tile topWallTile;
+    public Tile rightWallTile;
+    public Tile bottomWallTile;
+    public Tile topLeftWallCornerTile;
+    public Tile topRightWallCornerTile;
+    public Tile topEdgeWallTile;
+    public Tile leftWallTile;
     public Tile collisionTile;
     public Tile doorTile;
     public Tile treasureTile;
@@ -85,6 +93,8 @@ public class FloorGenerator : MonoBehaviour {
     }
 
     public void FillTiles() {
+        /*
+        // Fill cave floor times
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 if (terrainMap[x, y] == (int)TileType.Floor) {
@@ -104,6 +114,9 @@ public class FloorGenerator : MonoBehaviour {
                 }
             }
         }
+
+        // Fill wall tiles
+        */
     }
 
     private Tile GetRandomFloorTile() {

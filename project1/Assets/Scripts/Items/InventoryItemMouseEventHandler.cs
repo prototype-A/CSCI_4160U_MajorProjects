@@ -35,7 +35,7 @@ public class InventoryItemMouseEventHandler : MonoBehaviour,
     }
 
     private IEnumerator ShowItemInfo() {
-        // Show item info panel after some time of hovering
+        // Coroutine to show item info panel after some time of hovering
         if ((Time.time - mouseHoverTime) >= mouseHoverDurationThreshold) {
             // Change text to item's text
             Item item = GameData.playerData.items[itemNum];
