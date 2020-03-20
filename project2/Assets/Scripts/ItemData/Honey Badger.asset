@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 935908026687cea46a2533796c3a0370, type: 3}
+  m_Name: Honey Badger
+  m_EditorClassIdentifier: 
+  name: Honey Badger
+  desc: Gun
+  itemType: 2
+  size: {x: 4, y: 2}
+  srcImg: {fileID: 2800000, guid: f8afecf935b97b34f99984125d3cf555, type: 3}
