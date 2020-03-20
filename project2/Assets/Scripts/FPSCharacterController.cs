@@ -29,6 +29,8 @@ public class FPSCharacterController : MonoBehaviour {
 
         // Get Character Controller component
         this.charController = GetComponent<CharacterController>();
+
+        Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Casings"));
     }
 
     void Update() {

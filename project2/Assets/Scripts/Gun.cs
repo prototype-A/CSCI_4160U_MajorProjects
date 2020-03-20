@@ -18,6 +18,8 @@ public abstract class Gun : MonoBehaviour {
     public Transform casingEjectionPos;
     public GameObject[] bulletHoles;
     private Transform cameraT;
+    public int baseDamage;
+    public int damageModifier = 0;
     public float range;
     private bool ads = false;
     public Transform adsPos;
@@ -65,6 +67,7 @@ public abstract class Gun : MonoBehaviour {
     private void FireBullet() {
         // Only hit the ground, buildings, or enemies
         LayerMask enemyMask = LayerMask.GetMask("Enemies");
+        LayerMask destructablesMask =  LayerMask.GetMask("Destructable");
         LayerMask buildingMask = LayerMask.GetMask("Buildings");
 
         // Detect collision
@@ -77,6 +80,9 @@ public abstract class Gun : MonoBehaviour {
             GameObject bulletHole = Instantiate(bulletHoles[Random.Range(0, bulletHoles.Length)],
                                     hit.point + (0.01f * hit.normal),
                                     Quaternion.LookRotation(-1 * hit.normal, hit.transform.up));
+        } else if (Physics.Raycast(cameraT.position, cameraT.forward, out hit, range, destructablesMask)) {
+            // Make destructable object take damage
+            hit.collider.GetComponent<DestructableObject>().TakeDamage(GetDamage());
         }
 
         // Recoil
@@ -117,6 +123,10 @@ public abstract class Gun : MonoBehaviour {
 
     protected void ChargeGun() {
         gunAnimator.SetBool("Charged", true);
+    }
+
+    protected int GetDamage() {
+        return baseDamage + damageModifier;
     }
 
 
