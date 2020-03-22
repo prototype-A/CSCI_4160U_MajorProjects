@@ -1,5 +1,6 @@
-using UnityEngine;
+using System;
 using TMPro;
+using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 public class FPSCharacterController : MonoBehaviour {
@@ -22,6 +23,15 @@ public class FPSCharacterController : MonoBehaviour {
     // GUI
     public GameObject inventory;
     public GameObject crosshair;
+    public GameObject healthBar;
+    public GameObject hungerBar;
+    public GameObject thirstBar;
+
+    // Status
+    public float health = 100.0f;
+    public float hunger = 100.0f;
+    public float thirst = 100.0f;
+    private int statusMax = 100;
 
     void Start() {
         // Lock and hide cursor at center of screen
@@ -54,8 +64,12 @@ public class FPSCharacterController : MonoBehaviour {
         if (recoilReturnSpeed != null && vRecoil > 0 && transform.localRotation.x < fireV && !Input.GetButton("Fire")) {
             // Uncontrolled recoil
             vRecoil -= Time.deltaTime * recoilReturnSpeed;
+            hRecoil -= Time.deltaTime * hRecoil;
             if (vRecoil < 0) {
                 vRecoil = 0;
+            }
+            if (hRecoil < 0) {
+                hRecoil = 0;
             }
         }
 
@@ -100,9 +114,30 @@ public class FPSCharacterController : MonoBehaviour {
     }
 
     void FixedUpdate() {
+        // Drain hunger
+        if (hunger > 0) {
+            hunger -= Time.deltaTime * 0.03f;
+            if (hunger < 0) {
+                hunger = 0;
+            }
+        }
+        // Drain thirst
+        if (thirst > 0) {
+            thirst -= Time.deltaTime * 0.01f;
+            if (thirst < 0) {
+                thirst = 0;
+            }
+        }
+        UpdateBars();
+    }
+
+    public void UpdateBars() {
+        UpdateBar(hungerBar, hunger);
+        UpdateBar(thirstBar, thirst);
     }
 
     public void AddRecoil(float hRecoil, float vRecoil, float recoilReturnSpeed) {
+        // Add visual recoil to player camera
         this.recoilReturnSpeed = recoilReturnSpeed;
         this.hRecoil = hRecoil;
         this.vRecoil += vRecoil;
@@ -114,5 +149,18 @@ public class FPSCharacterController : MonoBehaviour {
 
     public void ToggleCrosshair(bool showCrosshair) {
         crosshair.SetActive(showCrosshair);
+    }
+
+    private float CalculateRectRight(float currVal, int maxVal, int rectRightAtZero, int rectRightAtFull) {
+        // Calculates the RectTransform's 'right' value to properly "deplete" bars such as hp bars
+        return rectRightAtZero - (currVal / maxVal) * (Math.Abs(rectRightAtFull) + Math.Abs(rectRightAtZero));
+    }
+
+    private void SetRectRight(RectTransform rect, float val, int maxVal, int rectRightAtZero, int rectRightAtFull) {
+        rect.offsetMax = new Vector2(-CalculateRectRight(val, maxVal, rectRightAtZero, rectRightAtFull), rect.offsetMax.y);
+    }
+
+    private void UpdateBar(GameObject bar, float val) {
+        SetRectRight(bar.GetComponent<RectTransform>(), val, statusMax, 155, -95);
     }
 }
