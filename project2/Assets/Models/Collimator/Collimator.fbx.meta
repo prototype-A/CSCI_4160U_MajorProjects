@@ -1,9 +1,14 @@
 fileFormatVersion: 2
-guid: 2575e0bff78f4894a807d011296ff555
+guid: 73bcc7ae18838c84fba6eed02e38c25a
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: collimator
+    second: {fileID: 2100000, guid: 6ef7cee0df684434ea5ca7a773b77465, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

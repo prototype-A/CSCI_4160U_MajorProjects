@@ -9,8 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4164415340004483647}
+  - component: {fileID: 7937913450419399858}
   m_Layer: 0
-  m_Name: Magazine
+  m_Name: 5.56 30-round Magagzine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34,6 +35,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7937913450419399858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780150658710245020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 829392893151f7c4b9a04fd51690969f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemInfo: {fileID: 11400000, guid: d1654fd245bf0104ba750e0a374a60e6, type: 2}
+  ammoCount: 30
+  capacity: 30
 --- !u!1001 &484323643921237178
 PrefabInstance:
   m_ObjectHideFlags: 0

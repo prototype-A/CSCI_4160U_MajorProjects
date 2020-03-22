@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Gun : MonoBehaviour {
+public abstract class Gun : Item {
 
-    public Item item;
     [SerializeField] protected Types.FireMode[] fireModes;
     [SerializeField] protected Types.FireMode fireMode;
     [SerializeField] private float minRecoilX;
@@ -12,6 +11,8 @@ public abstract class Gun : MonoBehaviour {
     [SerializeField] private float minRecoilY;
     [SerializeField] private float maxRecoilY;
     [SerializeField] protected float recoilReturnSpeed;
+    [SerializeField] protected Item[] attachments;
+    protected Magazine mag;
     protected Animator gunAnimator;
 
     public GameObject casingPrefab;
@@ -22,7 +23,7 @@ public abstract class Gun : MonoBehaviour {
     public int damageModifier = 0;
     public float range;
     private bool ads = false;
-    public Transform adsPos;
+    protected Transform adsPos;
 
     void Start() {
         gunAnimator = GetComponent<Animator>();
@@ -37,6 +38,11 @@ public abstract class Gun : MonoBehaviour {
             if (!ads) {
                 ads = true;
                 GetPlayerController().ToggleCrosshair(false);
+                // Get sight position for camera
+                adsPos = transform.Find("Scope/ScopePos");
+                if (adsPos == null) {
+                    adsPos = transform.Find("SightPos");
+                }
             } else {
                 ads = false;
                 cameraT.localPosition = new Vector3(0.0f, 0.7f, -0.25f);
@@ -44,6 +50,7 @@ public abstract class Gun : MonoBehaviour {
             }
         }
         if (ads) {
+            // Get ain-down sight position
             cameraT.position = adsPos.position;
             cameraT.rotation = adsPos.rotation;
         }
@@ -113,8 +120,8 @@ public abstract class Gun : MonoBehaviour {
                                             casingEjectionPos.position,
                                             Quaternion.Euler(casingEjectionPos.eulerAngles.x, casingEjectionPos.eulerAngles.y, casingEjectionPos.eulerAngles.z));
 
-        bulletCasing.GetComponent<Rigidbody>().AddForce(100.0f, 10.0f, 10.0f);
-        bulletCasing.GetComponent<Rigidbody>().AddTorque(transform.up * Random.Range(720.0f, 2160.0f));
+        bulletCasing.GetComponent<Rigidbody>().AddRelativeForce(100.0f, 100.0f, 0.0f);
+        bulletCasing.GetComponent<Rigidbody>().AddTorque(transform.up * Random.Range(0.1f, 1.1f));
     }
 
     protected void DischargeGun() {

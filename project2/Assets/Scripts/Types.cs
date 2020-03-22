@@ -7,7 +7,8 @@
         Muzzle,
         Rail,
         Scope,
-        Stock
+        Stock,
+        Underbarrel
     }
 
     public enum FireMode {

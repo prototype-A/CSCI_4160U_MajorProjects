@@ -44,6 +44,21 @@ public class FPSCharacterController : MonoBehaviour {
             transform.localRotation = Quaternion.Euler(vLook - vRecoil, hLook - hRecoil, 0.0f);
         }
 
+        // Return from recoil
+        if (transform.rotation.x > fireV && !Input.GetButton("Fire")) {
+            // Controlled recoil
+            vLook -= vRecoil;
+            hRecoil = 0;
+            vRecoil = 0;
+        }
+        if (recoilReturnSpeed != null && vRecoil > 0 && transform.localRotation.x < fireV && !Input.GetButton("Fire")) {
+            // Uncontrolled recoil
+            vRecoil -= Time.deltaTime * recoilReturnSpeed;
+            if (vRecoil < 0) {
+                vRecoil = 0;
+            }
+        }
+
         // Player movement
         float hMovement = Input.GetAxis("Horizontal");
         float vMovement = Input.GetAxis("Vertical");
@@ -85,20 +100,6 @@ public class FPSCharacterController : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        // Return from recoil
-        if (transform.rotation.x > fireV && !Input.GetButton("Fire")) {
-            // Controlled recoil
-            vLook -= vRecoil;
-            hRecoil = 0;
-            vRecoil = 0;
-        }
-        if (recoilReturnSpeed != null && vRecoil > 0 && transform.localRotation.x < fireV) {
-            // Uncontrolled recoil
-            vRecoil -= Time.deltaTime * recoilReturnSpeed;
-            if (vRecoil < 0) {
-                vRecoil = 0;
-            }
-        }
     }
 
     public void AddRecoil(float hRecoil, float vRecoil, float recoilReturnSpeed) {

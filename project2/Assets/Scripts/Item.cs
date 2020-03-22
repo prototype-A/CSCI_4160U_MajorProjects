@@ -1,13 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-﻿[System.Serializable]
-[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Item", order = 1)]
-public class Item : ScriptableObject {
+public abstract class Item : MonoBehaviour {
 
-    public string name;
-    public string desc;
-    public Types.ItemType itemType;
-    public Vector2 size;
-    public Texture srcImg;
+    public ItemInfo itemInfo;
 
+    public virtual void ShowItemInfo(ItemInfoPanel infoPanel) {
+        infoPanel.SetName(itemInfo.name);
+        infoPanel.SetDesc(itemInfo.desc);
+    }
 }

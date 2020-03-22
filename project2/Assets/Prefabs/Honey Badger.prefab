@@ -675,14 +675,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1e5d7d7064b31340a144688c1b035e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  item: {fileID: 11400000, guid: fe8951ec885e34447a327447595788bc, type: 2}
+  itemInfo: {fileID: 11400000, guid: fe8951ec885e34447a327447595788bc, type: 2}
   fireModes: 010000000200000000000000
   fireMode: 0
   minRecoilX: -0.5
   maxRecoilX: 0.5
   minRecoilY: 1.5
   maxRecoilY: 3
-  recoilReturnSpeed: 10
+  recoilReturnSpeed: 2.5
+  attachments: []
   casingPrefab: {fileID: 196718007576935804, guid: 2aca7e1e5261e1845b13e1e7005e5c8c,
     type: 3}
   casingEjectionPos: {fileID: 8909090727161643069}
@@ -1716,7 +1717,7 @@ GameObject:
   m_Component:
   - component: {fileID: 309961706270917586}
   m_Layer: 12
-  m_Name: ScopePos
+  m_Name: SightPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

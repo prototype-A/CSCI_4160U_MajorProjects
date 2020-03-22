@@ -15,9 +15,11 @@ public class InventoryItem : MonoBehaviour,
 
     public Item item;
     private RectTransform rectTransform;
-    public Transform infoPanel;
+    public Menu menu;
+    private Transform itemInfoPanel;
     public GraphicRaycaster raycaster;
     private PointerEventData pointerEventData;
+    private Vector3 origPos;
 
     private bool mouseEntered = false;
     public float mouseHoverDuration = 1.0f;
@@ -26,6 +28,7 @@ public class InventoryItem : MonoBehaviour,
 
     void Start() {
         rectTransform = GetComponent<RectTransform>();
+        itemInfoPanel = menu.itemInfoPanel;
     }
 
     void Update() {
@@ -38,21 +41,20 @@ public class InventoryItem : MonoBehaviour,
         // Coroutine to show item info panel after some time of hovering
         if ((Time.time - mouseHoverTime) >= mouseHoverDuration &&
             (pointerEventData != null || !pointerEventData.dragging)) {
-            // Change text to item's text
-            infoPanel.GetComponent<ItemInfoPanel>().SetName(item.name);
-            infoPanel.GetComponent<ItemInfoPanel>().SetDesc(item.desc);
+            // Show item info
+            item.ShowItemInfo(itemInfoPanel.GetComponent<ItemInfoPanel>());
 
             // Position and show info panel
-            float oneByOneSize = GetComponent<RectTransform>().sizeDelta.x / item.size.x;
-            float xPos = transform.position.x + (oneByOneSize * item.size.x) - 5;
-            float yPos = transform.position.y  + (oneByOneSize * item.size.y) - 30;
-            infoPanel.position = new Vector3(xPos, yPos, 0);
-            infoPanel.gameObject.SetActive(true);
+            float oneByOneSize = GetComponent<RectTransform>().sizeDelta.x / item.itemInfo.size.x;
+            float xPos = transform.position.x + (oneByOneSize * (item.itemInfo.size.x / 2 + 2));
+            float yPos = transform.position.y + (oneByOneSize * (item.itemInfo.size.y / 2 + 2)) - (30 * item.itemInfo.size.y);
+            itemInfoPanel.position = new Vector3(xPos, yPos, 0);
+            itemInfoPanel.gameObject.SetActive(true);
 
             // Force refresh to properly resize panel on first hover
             Canvas.ForceUpdateCanvases();
-            infoPanel.gameObject.GetComponent<VerticalLayoutGroup>().enabled = false;
-            infoPanel.gameObject.GetComponent<VerticalLayoutGroup>().enabled = true;
+            itemInfoPanel.gameObject.GetComponent<VerticalLayoutGroup>().enabled = false;
+            itemInfoPanel.gameObject.GetComponent<VerticalLayoutGroup>().enabled = true;
         }
 
         yield return new WaitForSeconds(0.5f);
@@ -65,9 +67,9 @@ public class InventoryItem : MonoBehaviour,
 
     private void SetSelfSize() {
         // Change size if not 1x1-sized item
-        if (item.size.x != 1 && item.size.x != item.size.y) {
+        if (item.itemInfo.size.x != 1 && item.itemInfo.size.x != item.itemInfo.size.y) {
             Vector2 oneByOneSize = GetComponent<RectTransform>().sizeDelta;
-            GetComponent<RectTransform>().sizeDelta = new Vector2(item.size.x * oneByOneSize.x, item.size.y * oneByOneSize.y);
+            GetComponent<RectTransform>().sizeDelta = new Vector2(item.itemInfo.size.x * oneByOneSize.x, item.itemInfo.size.y * oneByOneSize.y);
         }
     }
 
@@ -94,13 +96,14 @@ public class InventoryItem : MonoBehaviour,
         pointerEventData = eventData;
         // Hide item info if it is showing
         mouseEntered = false;
-        if (infoPanel.gameObject.activeSelf) {
-            infoPanel.gameObject.SetActive(false);
+        if (menu.itemInfoPanel.gameObject.activeSelf) {
+            menu.itemInfoPanel.gameObject.SetActive(false);
         }
     }
 
     public void OnBeginDrag(PointerEventData eventData) {
         pointerEventData = eventData;
+        origPos = transform.position;
         // Start to move item to make it appear to start being dragged earlier
         OnDrag(eventData);
     }
@@ -117,18 +120,45 @@ public class InventoryItem : MonoBehaviour,
             // Dragging item
             transform.position = Input.mousePosition;
         } else {
-            /*
             // Stopped dragging item
-            // Move item to new position if dragged to another slot
             List<RaycastResult> results = new List<RaycastResult>();
             raycaster.Raycast(eventData, results);
-            foreach (RaycastResult result in results) {
-                if (true) {
-                    //InventoryItemMouseEventHandler ui = result.gameObject.GetComponent<InventoryItemMouseEventHandler>();
-                    //GameData.inventoryManager.MoveItem(itemNum, ui.itemNum);
+
+            if (results.Count == 0) {
+                // Remove item from inventory
+
+
+                Destroy(gameObject);
+            } else {
+                bool itemMoved = false;
+                foreach (RaycastResult result in results) {
+                    // Check if valid slot
+                    ItemSlot slot = result.gameObject.GetComponent<ItemSlot>();
+                    if (slot != null && (slot.slotType == item.itemInfo.itemType || slot.slotType == Types.ItemType.All)) {
+                        // Check if any other items are in slot/nearby slots
+                        bool noOtherItems = true;
+                        foreach (RaycastResult otherResult in results) {
+                            if (otherResult.gameObject.GetComponent<Item>() != null) {
+                                noOtherItems = false;
+                                break;
+                            }
+                        }
+                        // Drop item in new slot
+                        Vector3 resultSlot = result.gameObject.transform.position;
+                        if (noOtherItems && item.itemInfo.size == new Vector2(1, 1)) {
+                            transform.position = result.gameObject.transform.position;
+                            itemMoved = true;
+                        } else if (noOtherItems) {
+                            transform.position = result.gameObject.transform.position;
+                            itemMoved = true;
+                        }
+                    }
+                }
+                if (!itemMoved) {
+                    // Return item to original position
+                    transform.position = origPos;
                 }
             }
-            */
         }
     }
 
