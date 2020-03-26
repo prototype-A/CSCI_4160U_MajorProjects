@@ -11,9 +11,10 @@ public abstract class Gun : Item {
     [SerializeField] private float minRecoilY;
     [SerializeField] private float maxRecoilY;
     [SerializeField] protected float recoilReturnSpeed;
-    [SerializeField] protected Item[] attachments;
+    public InventoryItem[] attachments { get; }
     protected Magazine mag;
     protected Animator gunAnimator;
+    protected Menu gui;
 
     public GameObject casingPrefab;
     public Transform casingEjectionPos;
@@ -30,6 +31,8 @@ public abstract class Gun : Item {
 
         // Get camera transform
         this.cameraT = GetPlayerController().GetCameraTransform();
+
+        gui = transform.parent.Find("GUI").GetComponent<Menu>();
     }
 
     protected void Update() {

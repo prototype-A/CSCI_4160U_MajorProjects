@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -21,8 +22,7 @@ public class FPSCharacterController : MonoBehaviour {
     public float runSpeed = 8.0f;
 
     // GUI
-    public GameObject inventory;
-    public GameObject crosshair;
+    private Menu gui;
     public GameObject healthBar;
     public GameObject hungerBar;
     public GameObject thirstBar;
@@ -40,12 +40,15 @@ public class FPSCharacterController : MonoBehaviour {
         // Get Character Controller component
         this.charController = GetComponent<CharacterController>();
 
+        gui = transform.Find("GUI").GetComponent<Menu>();
+
+        // Ignore collisions with bullet casings
         Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Casings"));
     }
 
     void Update() {
         // Camera movement
-        if (!inventory.activeSelf) {
+        if (!gui.menu.activeSelf) {
             float hCameraMovement = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
             float vCameraMovement = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
             hLook += hCameraMovement;
@@ -87,11 +90,11 @@ public class FPSCharacterController : MonoBehaviour {
 
         // Open inventory
         if (Input.GetButtonDown("Inventory")) {
-            if (!inventory.activeSelf) {
-                inventory.SetActive(true);
+            if (!gui.menu.activeSelf) {
+                gui.menu.SetActive(true);
                 Cursor.lockState = CursorLockMode.None;
             } else {
-                inventory.SetActive(false);
+                gui.menu.SetActive(false);
                 Cursor.lockState = CursorLockMode.Locked;
             }
         }
@@ -136,6 +139,15 @@ public class FPSCharacterController : MonoBehaviour {
         UpdateBar(thirstBar, thirst);
     }
 
+    public void TakeDamage(float damage) {
+        health -= damage;
+        UpdateBar(healthBar, health);
+        if (health <= 0) {
+            // Player died
+            health = 0;
+        }
+    }
+
     public void AddRecoil(float hRecoil, float vRecoil, float recoilReturnSpeed) {
         // Add visual recoil to player camera
         this.recoilReturnSpeed = recoilReturnSpeed;
@@ -143,12 +155,24 @@ public class FPSCharacterController : MonoBehaviour {
         this.vRecoil += vRecoil;
     }
 
+    public void KillConfirm() {
+        StartCoroutine(ShowKillConfirm());
+    }
+
+    private IEnumerator ShowKillConfirm() {
+        gui.killConfirm.SetActive(true);
+
+        yield return new WaitForSeconds(1.0f);
+
+        gui.killConfirm.SetActive(false);
+    }
+
     public Transform GetCameraTransform() {
         return transform.Find("Camera");
     }
 
     public void ToggleCrosshair(bool showCrosshair) {
-        crosshair.SetActive(showCrosshair);
+        gui.crosshair.SetActive(showCrosshair);
     }
 
     private float CalculateRectRight(float currVal, int maxVal, int rectRightAtZero, int rectRightAtFull) {

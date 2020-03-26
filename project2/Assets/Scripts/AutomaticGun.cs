@@ -5,14 +5,16 @@ using UnityEngine;
 public class AutomaticGun : Gun {
 
     void Update() {
-        // Hold down for Automatic Fire
-        if (Input.GetButton("Fire")) {
-            Fire();
-        } else {
-            StopFiring();
-        }
+        if (!gui.menu.activeSelf) {
+            // Hold down for Automatic Fire
+            if (Input.GetButton("Fire")) {
+                Fire();
+            } else {
+                StopFiring();
+            }
 
-        // Other functions
-        base.Update();
+            // Other functions
+            base.Update();
+        }
     }
 }

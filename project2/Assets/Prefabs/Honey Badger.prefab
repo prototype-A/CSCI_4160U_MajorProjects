@@ -683,7 +683,11 @@ MonoBehaviour:
   minRecoilY: 1.5
   maxRecoilY: 3
   recoilReturnSpeed: 2.5
-  attachments: []
+  attachments:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   casingPrefab: {fileID: 196718007576935804, guid: 2aca7e1e5261e1845b13e1e7005e5c8c,
     type: 3}
   casingEjectionPos: {fileID: 8909090727161643069}
