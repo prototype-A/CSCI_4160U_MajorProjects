@@ -2,6 +2,7 @@
     public enum ItemType {
         All,
         Barrel,
+        Consumable,
         Gun,
         Magazine,
         Muzzle,

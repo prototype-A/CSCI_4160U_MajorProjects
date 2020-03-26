@@ -118,33 +118,65 @@ public class FPSCharacterController : MonoBehaviour {
 
     void FixedUpdate() {
         // Drain hunger
+
         if (hunger > 0) {
-            hunger -= Time.deltaTime * 0.03f;
-            if (hunger < 0) {
-                hunger = 0;
-            }
+            Famish(Time.deltaTime * 0.03f);
+        } else {
+            // Take damage if famished
+            TakeDamage(0.05f);
         }
         // Drain thirst
         if (thirst > 0) {
-            thirst -= Time.deltaTime * 0.01f;
-            if (thirst < 0) {
-                thirst = 0;
-            }
+            Dehydrate(Time.deltaTime * 0.01f);
+        } else {
+            // Take damage if dehydrated
+            TakeDamage(0.15f);
         }
         UpdateBars();
     }
 
     public void UpdateBars() {
+        UpdateBar(healthBar, health);
         UpdateBar(hungerBar, hunger);
         UpdateBar(thirstBar, thirst);
     }
 
     public void TakeDamage(float damage) {
         health -= damage;
-        UpdateBar(healthBar, health);
         if (health <= 0) {
             // Player died
             health = 0;
+        }
+    }
+
+    public void Famish(float damage) {
+        hunger -= damage;
+        if (hunger <= 0) {
+            // Player famished
+            hunger = 0;
+        }
+    }
+
+    public void Dehydrate(float damage) {
+        thirst -= damage;
+        if (thirst <= 0) {
+            // Player dehydrated
+            thirst = 0;
+        }
+    }
+
+    public void Heal(int health, int hunger, int thirst) {
+        this.health += health;
+        if (this.health > 100.0f) {
+            this.health = 100.0f;
+        }
+        this.hunger += hunger;
+        if (this.hunger > 100.0f) {
+            this.hunger = 100.0f;
+        }
+        this.thirst += thirst;
+        if (this.thirst > 100.0f) {
+            this.thirst = 100.0f;
         }
     }
 
