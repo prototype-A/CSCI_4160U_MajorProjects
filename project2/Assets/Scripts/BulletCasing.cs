@@ -2,7 +2,7 @@
 
 public class BulletCasing : TempInstantiatedObject {
 
-    void Start() {
+    new void Start() {
         // Don't let player collide with spent bullet casings
         gameObject.layer = LayerMask.NameToLayer("Casings");
 

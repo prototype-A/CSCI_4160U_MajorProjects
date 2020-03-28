@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AutomaticGun : Gun {
 
-    void Update() {
+    new void Update() {
         if (!gui.menu.activeSelf) {
             // Hold down for Automatic Fire
             if (Input.GetButton("Fire")) {

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class ConsumableItem : Item {
+public class ConsumableItem : InventoryItem {
 
     public int healthHealAmount;
     public int hungerHealAmount;
@@ -23,6 +23,9 @@ public class ConsumableItem : Item {
             thirstHeal = 0;
             player.Dehydrate(Math.Abs(thirstHealAmount));
         }
+        
         player.Heal(healthHeal, hungerHeal, thirstHeal);
+
+        Destroy(gameObject);
     }
 }

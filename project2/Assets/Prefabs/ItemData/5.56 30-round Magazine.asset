@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: 5.56 Magazine
   desc: Standard 30-round magazine containing 5.56 ammo
-  itemType: 3
+  itemType: 4
   size: {x: 1, y: 1}
   srcImg: {fileID: 2800000, guid: f408868e1fddc4447a9bdce3aa439662, type: 3}
   prefab: {fileID: 6780150658710245020, guid: 462d1f1e7c2e3e842b639ffcb2e1e12d, type: 3}

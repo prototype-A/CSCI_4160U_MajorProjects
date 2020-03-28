@@ -4,34 +4,41 @@ using UnityEngine;
 
 public abstract class Gun : Item {
 
-    [SerializeField] protected Types.FireMode[] fireModes;
-    [SerializeField] protected Types.FireMode fireMode;
-    [SerializeField] private float minRecoilX;
-    [SerializeField] private float maxRecoilX;
-    [SerializeField] private float minRecoilY;
-    [SerializeField] private float maxRecoilY;
-    [SerializeField] protected float recoilReturnSpeed;
-    public InventoryItem[] attachments { get; }
-    protected Magazine mag;
-    protected Animator gunAnimator;
-    protected Menu gui;
-
-    public GameObject casingPrefab;
-    public Transform casingEjectionPos;
-    public GameObject[] bulletHoles;
-    private Transform cameraT;
+    // Base gun properties
+    public Vector3 instantiatePos;
     public int baseDamage;
     public int damageModifier = 0;
     public float range;
-    private bool ads = false;
+    [SerializeField] protected Types.FireMode[] fireModes = { Types.FireMode.Safety, Types.FireMode.Semi };
+    [SerializeField] protected Types.FireMode fireMode = Types.FireMode.Safety;
+    public InventoryItem[] attachments { get; }
+    protected Animator gunAnimator;
+    public GameObject casingPrefab;
+    public Transform casingEjectionPos;
+    public GameObject[] bulletHoles;
+
+    // Recoil
+    [SerializeField] protected float minRecoilX = 0.0f;
+    [SerializeField] protected float maxRecoilX = 0.0f;
+    [SerializeField] protected float minRecoilY = 0.0f;
+    [SerializeField] protected float maxRecoilY = 0.0f;
+    [SerializeField] protected float recoilReturnSpeed = 1.0f;
+
+    // Aim-down Sights
+    public bool ads = false;
+    private Transform cameraT;
     protected Transform adsPos;
 
+    protected Menu gui;
+
     void Start() {
+        // Get gun animator
         gunAnimator = GetComponent<Animator>();
 
-        // Get camera transform
+        // Get camera transform for aim-down sights
         this.cameraT = GetPlayerController().GetCameraTransform();
 
+        // Get player gui
         gui = transform.parent.Find("GUI").GetComponent<Menu>();
     }
 
@@ -40,16 +47,16 @@ public abstract class Gun : Item {
         if (Input.GetButtonDown("Aim-Down Sight")) {
             if (!ads) {
                 ads = true;
-                GetPlayerController().ToggleCrosshair(false);
+                gui.ToggleCrosshair(false);
                 // Get sight position for camera
-                adsPos = transform.Find("Scope/ScopePos");
+                adsPos = transform.Find("Scope/AdsScopePos");
                 if (adsPos == null) {
-                    adsPos = transform.Find("SightPos");
+                    adsPos = transform.Find("AdsSightPos");
                 }
             } else {
                 ads = false;
-                cameraT.localPosition = new Vector3(0.0f, 0.7f, -0.25f);
-                GetPlayerController().ToggleCrosshair(true);
+                cameraT.localPosition = GetPlayerController().defaultCameraPos;
+                gui.ToggleCrosshair(true);
             }
         }
         if (ads) {
@@ -69,6 +76,7 @@ public abstract class Gun : Item {
         }
     }
 
+    // Gun methods
     protected void Fire() {
         // Play animation
         gunAnimator.SetBool("TriggerPulled", true);
@@ -119,12 +127,15 @@ public abstract class Gun : Item {
     }
 
     protected void EjectCasing() {
-        GameObject bulletCasing = Instantiate(casingPrefab,
-                                            casingEjectionPos.position,
-                                            Quaternion.Euler(casingEjectionPos.eulerAngles.x, casingEjectionPos.eulerAngles.y, casingEjectionPos.eulerAngles.z));
+        if (casingPrefab != null) {
+            GameObject bulletCasing = Instantiate(casingPrefab,
+                                                casingEjectionPos.position,
+                                                Quaternion.Euler(casingEjectionPos.eulerAngles.x, casingEjectionPos.eulerAngles.y, casingEjectionPos.eulerAngles.z));
 
-        bulletCasing.GetComponent<Rigidbody>().AddRelativeForce(100.0f, 100.0f, 0.0f);
-        bulletCasing.GetComponent<Rigidbody>().AddTorque(transform.up * Random.Range(0.1f, 1.1f));
+            // Give casing spin and force
+            bulletCasing.GetComponent<Rigidbody>().AddRelativeForce(100.0f, 100.0f, 0.0f);
+            bulletCasing.GetComponent<Rigidbody>().AddTorque(transform.up * Random.Range(0.1f, 1.1f));
+        }
     }
 
     protected void DischargeGun() {
@@ -140,11 +151,8 @@ public abstract class Gun : Item {
     }
 
 
-    private Transform GetPlayerTransform() {
-        return transform.parent;
-    }
-
-    private FPSCharacterController GetPlayerController() {
-        return GetPlayerTransform().gameObject.GetComponent<FPSCharacterController>();
+    // Public methods
+    public void ShowModel(bool show) {
+        gameObject.transform.Find("Model").gameObject.SetActive(show);
     }
 }

@@ -8,4 +8,12 @@ public abstract class Item : MonoBehaviour {
         infoPanel.SetName(itemInfo.name);
         infoPanel.SetDesc(itemInfo.desc);
     }
+
+    public Transform GetPlayerTransform() {
+        return transform.parent;
+    }
+
+    public FPSCharacterController GetPlayerController() {
+        return GetPlayerTransform().gameObject.GetComponent<FPSCharacterController>();
+    }
 }

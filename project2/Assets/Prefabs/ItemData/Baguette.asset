@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 935908026687cea46a2533796c3a0370, type: 3}
   m_Name: Baguette
   m_EditorClassIdentifier: 
-  name: 
-  desc: 
-  itemType: 0
-  size: {x: 0, y: 0}
-  srcImg: {fileID: 0}
-  prefab: {fileID: 0}
+  name: Baguette
+  desc: Delicious bread to sate your hunger
+  itemType: 2
+  size: {x: 1, y: 1}
+  srcImg: {fileID: 2800000, guid: a315341500933874cb923c10d044d18a, type: 3}
+  prefab: {fileID: 270315117325603994, guid: dabeabd7f37d9f943b203f06b8b3899b, type: 3}

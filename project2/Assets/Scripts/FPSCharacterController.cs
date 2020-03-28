@@ -8,12 +8,13 @@ public class FPSCharacterController : MonoBehaviour {
 
     // Camera movement
     public Transform cameraT;
+    public Vector3 defaultCameraPos = new Vector3(0.0f, 0.7f, -0.25f);
     public float mouseSensitivity = 100.0f;
     private float hLook = 0.0f;
     private float vLook = 0.0f;
     private float hRecoil = 0.0f;
     private float vRecoil = 0.0f;
-    private float recoilReturnSpeed;
+    private float recoilReturnSpeed = 1.0f;
     private float fireV = 0.0f;
 
     // Movement
@@ -32,6 +33,10 @@ public class FPSCharacterController : MonoBehaviour {
     public float hunger = 100.0f;
     public float thirst = 100.0f;
     private int statusMax = 100;
+
+    // Equipped guns
+    public Gun[] guns;
+    public int equippedGun = 0;
 
     void Start() {
         // Lock and hide cursor at center of screen
@@ -64,7 +69,7 @@ public class FPSCharacterController : MonoBehaviour {
             hRecoil = 0;
             vRecoil = 0;
         }
-        if (recoilReturnSpeed != null && vRecoil > 0 && transform.localRotation.x < fireV && !Input.GetButton("Fire")) {
+        if (vRecoil > 0 && transform.localRotation.x < fireV && !Input.GetButton("Fire")) {
             // Uncontrolled recoil
             vRecoil -= Time.deltaTime * recoilReturnSpeed;
             hRecoil -= Time.deltaTime * hRecoil;
@@ -104,16 +109,20 @@ public class FPSCharacterController : MonoBehaviour {
             fireV = transform.rotation.x;
         }
 
-        // Change cursor lock modes
-        /*
-        if (Input.GetKeyDown(KeyCode.Escape)) {
-            if (Cursor.lockState == CursorLockMode.Locked) {
-                Cursor.lockState = CursorLockMode.None;
-            } else {
-                Cursor.lockState = CursorLockMode.Locked;
+        // Change weapons
+        if (Input.GetButtonDown("Main Weapon") && guns[0] != null) {
+            guns[0].ShowModel(true);
+            if (guns[1] != null) {
+                guns[1].ShowModel(false);
             }
+            equippedGun = 0;
+        } else if (Input.GetButtonDown("Second Weapon") && guns[1] != null) {
+            guns[1].ShowModel(true);
+            if (guns[0] != null) {
+                guns[0].ShowModel(false);
+            }
+            equippedGun = 1;
         }
-        */
     }
 
     void FixedUpdate() {
@@ -180,6 +189,17 @@ public class FPSCharacterController : MonoBehaviour {
         }
     }
 
+    public void EquipGun(Gun gun, int slotNum) {
+        guns[slotNum] = gun;
+        gui.ShowGunGui(true);
+    }
+
+    public void UnequipGun(Gun gun, int slotNum) {
+        gun.ads = false;
+        guns[slotNum] = null;
+        gui.ShowGunGui(false);
+    }
+
     public void AddRecoil(float hRecoil, float vRecoil, float recoilReturnSpeed) {
         // Add visual recoil to player camera
         this.recoilReturnSpeed = recoilReturnSpeed;
@@ -201,10 +221,6 @@ public class FPSCharacterController : MonoBehaviour {
 
     public Transform GetCameraTransform() {
         return transform.Find("Camera");
-    }
-
-    public void ToggleCrosshair(bool showCrosshair) {
-        gui.crosshair.SetActive(showCrosshair);
     }
 
     private float CalculateRectRight(float currVal, int maxVal, int rectRightAtZero, int rectRightAtFull) {

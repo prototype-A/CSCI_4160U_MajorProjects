@@ -4,12 +4,12 @@ using TMPro;
 public class GunCustomization : MonoBehaviour {
 
     private Gun gun;
-    [SerializeField] private TextMeshProUGUI nameText;
-    [SerializeField] private Transform muzzleSlot;
-    [SerializeField] private Transform magazineSlot;
-    [SerializeField] private Transform underbarrelSlot;
-    [SerializeField] private Transform scopeSlot;
-    [SerializeField] private Transform attachments;
+    [SerializeField] private TextMeshProUGUI nameText = null;
+    [SerializeField] private Transform muzzleSlot = null;
+    [SerializeField] private Transform magazineSlot = null;
+    [SerializeField] private Transform underbarrelSlot = null;
+    [SerializeField] private Transform scopeSlot = null;
+    [SerializeField] private Transform attachments = null;
     public GameObject attachmentPrefab;
 
     private void SetGunName(string name) {

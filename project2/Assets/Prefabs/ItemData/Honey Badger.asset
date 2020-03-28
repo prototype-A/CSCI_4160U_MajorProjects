@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Honey Badger
   desc: Gun
-  itemType: 2
+  itemType: 3
   size: {x: 4, y: 2}
   srcImg: {fileID: 2800000, guid: f8afecf935b97b34f99984125d3cf555, type: 3}
+  prefab: {fileID: 0}

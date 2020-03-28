@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class Menu : MonoBehaviour {
 
+    public Transform player;
     public GameObject crosshair;
     public GameObject killConfirm;
     public GameObject gunGui;
@@ -20,5 +21,14 @@ public class Menu : MonoBehaviour {
 
     public GraphicRaycaster GetGraphicRaycaster() {
         return GetComponent<GraphicRaycaster>();
+    }
+
+    public void ShowGunGui(bool show) {
+        crosshair.SetActive(show);
+        gunGui.SetActive(show);
+    }
+
+    public void ToggleCrosshair(bool show) {
+        crosshair.SetActive(show);
     }
 }

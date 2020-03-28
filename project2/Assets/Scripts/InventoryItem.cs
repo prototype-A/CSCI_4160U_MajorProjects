@@ -14,13 +14,14 @@ public class InventoryItem : MonoBehaviour,
                             IPointerExitHandler {
 
     public Item item;
+    public ItemSlot equippedSlot;
     private RectTransform rectTransform;
     private Menu gui;
     private PointerEventData pointerEventData;
     private Vector3 origPos;
 
     private bool mouseEntered = false;
-    public float mouseHoverDuration = 1.0f;
+    private float mouseHoverDuration = 1.0f;
     private float mouseHoverTime = 0.0f;
 
 
@@ -72,6 +73,7 @@ public class InventoryItem : MonoBehaviour,
     }
 
     private bool WithinInventorySpace() {
+        // Check if item is within the bounds of the inventory
         foreach (Transform boundary in gui.inventorySpaceBoundaries) {
             // Convert rect positions to world space for correct overlap checking
             RectTransform boundaryRT = boundary.gameObject.GetComponent<RectTransform>();
@@ -92,6 +94,7 @@ public class InventoryItem : MonoBehaviour,
     }
 
     private bool NotOverlappingItems() {
+        // Check if item is overlapping with another inventory item
         foreach (Transform otherItem in gui.inventoryItems) {
             if (otherItem.gameObject != gameObject) {
                 // Convert rect positions to world space for correct overlap checking
@@ -112,6 +115,29 @@ public class InventoryItem : MonoBehaviour,
         }
 
         return true;
+    }
+
+    private InventoryItem GetEquippedItem() {
+        // Get the item in slot with overlap check
+        foreach (Transform otherItem in gui.inventoryItems) {
+            if (otherItem.gameObject != gameObject) {
+                // Convert rect positions to world space for correct overlap checking
+                RectTransform otherItemRT = otherItem.gameObject.GetComponent<RectTransform>();
+                Rect otherItemRect = otherItemRT.rect;
+                otherItemRect.center = otherItemRT.TransformPoint(otherItemRect.center);
+                otherItemRect.size = otherItemRT.TransformVector(otherItemRect.size);
+                RectTransform itemRT = gameObject.GetComponent<RectTransform>();
+                Rect itemRect = itemRT.rect;
+                itemRect.center = itemRT.TransformPoint(itemRect.center);
+                itemRect.size = itemRT.TransformVector(itemRect.size);
+
+                if (itemRect.Overlaps(otherItemRect)) {
+                    return otherItem.gameObject.GetComponent<InventoryItem>();
+                }
+            }
+        }
+
+        return null;
     }
 
     public void OnPointerClick(PointerEventData eventData) {
@@ -183,12 +209,37 @@ public class InventoryItem : MonoBehaviour,
                 foreach (RaycastResult result in results) {
                     // Check if dragging item to available inventory space
                     if (result.gameObject.name == "InventorySpace" && WithinInventorySpace() && NotOverlappingItems()) {
+                        // Removed from a slot
+                        if (equippedSlot != null) {
+                            if (item.itemInfo.itemType == Types.ItemType.Gun) {
+                                // Unequip gun
+                                item.GetPlayerController().UnequipGun((Gun)item, equippedSlot.index);
+                            }
+                            equippedSlot.occupied = false;
+                            equippedSlot = null;
+                        }
                         itemMoved = true;
                         break;
                     }
-                    // Equip weapon
+
+                    // Drop item in a equip slot
                     ItemSlot slot = result.gameObject.GetComponent<ItemSlot>();
-                    if (slot != null && slot.slotType == Types.ItemType.Gun) {
+                    if (slot != null && slot.slotType == item.itemInfo.itemType) {
+                        transform.position = result.gameObject.transform.position;
+                        if (slot.occupied) {
+                            // Swap with already-equipped item in slot
+                            InventoryItem equippedItem = GetEquippedItem();
+                            equippedItem.equippedSlot = null;
+                            equippedItem.gameObject.transform.position = origPos;
+                        }
+                        equippedSlot = slot;
+                        equippedSlot.occupied = true;
+
+                        // Equip gun
+                        if (slot.slotType == Types.ItemType.Gun) {
+                            item.GetPlayerController().EquipGun((Gun)item, equippedSlot.index);
+                        }
+
                         itemMoved = true;
                     }
                 }
@@ -197,35 +248,6 @@ public class InventoryItem : MonoBehaviour,
                     // Return item to original position if invalid destination
                     transform.position = origPos;
                 }
-
-                /*
-                bool itemMoved = false;
-                foreach (RaycastResult result in results) {
-                    // Check if valid slot
-                    ItemSlot slot = result.gameObject.GetComponent<ItemSlot>();
-                    if (slot != null && (slot.slotType == item.itemInfo.itemType || slot.slotType == Types.ItemType.All)) {
-                        // Check if any other items are in slot/nearby slots
-                        bool noOtherItems = true;
-
-
-                        // Drop item in new slot
-                        Vector3 resultSlot = result.gameObject.transform.position;
-                        if (noOtherItems && item.itemInfo.size == new Vector2(1, 1)) {
-                            transform.position = result.gameObject.transform.position;
-                            itemMoved = true;
-                        } else if (noOtherItems) {
-                            transform.position = result.gameObject.transform.position;
-                            itemMoved = true;
-                        }
-
-
-                    }
-                }
-                if (!itemMoved) {
-                    // Return item to original position if invalid destination
-                    transform.position = origPos;
-                }
-                */
             }
         }
     }
