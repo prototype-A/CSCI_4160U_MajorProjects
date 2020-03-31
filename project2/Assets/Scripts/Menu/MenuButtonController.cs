@@ -1,11 +1,11 @@
 using System.Collections;
-using System.Runtime.Serialization.Formatters.Binary;
 using TMPro;
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MenuButtonController : MonoBehaviour {
 
+    // Main Menu sections
     public GameObject mainMenuScreen;
     public GameObject characterCustomizationScreen;
     public GameObject loadSaveScreen;
@@ -61,14 +61,9 @@ public class MenuButtonController : MonoBehaviour {
             StartCoroutine(FadeError());
         } else {
             // Start game
-            PlayerPrefs.SetString("PlayerName", playerNameInput.text);
-            SceneManager.LoadScene("Game");
+            GameSystem.SetPlayerName(playerNameInput.text);
+            SceneManager.LoadScene(GameSystem.GAME_SCENE_NAME);
         }
-    }
-
-    // Load saved game
-    public void LoadGame() {
-
     }
 
     // Quit the game

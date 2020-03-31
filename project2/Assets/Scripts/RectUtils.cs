@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public static class Utils {
+public static class RectUtils {
 
     public static float CalculateRectRight(float currVal, int maxVal, int rectRightAtZero, int rectRightAtFull) {
         // Calculates the RectTransform's 'right' value to properly "deplete" bars such as hp bars

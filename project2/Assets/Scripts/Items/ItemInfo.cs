@@ -6,7 +6,7 @@ public class ItemInfo : ScriptableObject {
 
     public new string name;
     public string desc;
-    public Types.ItemType itemType;
+    public GameSystem.ItemType itemType;
     public Vector2 size;
     public Texture srcImg;
     public GameObject prefab;

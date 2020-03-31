@@ -23,7 +23,7 @@ public class FPSCharacterController : MonoBehaviour {
     public float runSpeed = 8.0f;
 
     // GUI
-    private Menu gui;
+    public Menu gui;
     public GameObject healthBar;
     public GameObject hungerBar;
     public GameObject thirstBar;
@@ -44,8 +44,6 @@ public class FPSCharacterController : MonoBehaviour {
 
         // Get Character Controller component
         this.charController = GetComponent<CharacterController>();
-
-        gui = transform.Find("GUI").GetComponent<Menu>();
 
         // Ignore collisions with bullet casings
         Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Casings"));

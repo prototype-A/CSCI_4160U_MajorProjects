@@ -146,7 +146,7 @@ public class InventoryItem : MonoBehaviour,
             // Double click
             Debug.Log("Double-clicked item");
         } else {
-            if (item.itemInfo.itemType == Types.ItemType.Gun) {
+            if (item.itemInfo.itemType == GameSystem.ItemType.Gun) {
                 // Show gun attachments in customization pane
                 gui.gunCustomization.CustomizeGun((Gun)item);
             }
@@ -211,7 +211,7 @@ public class InventoryItem : MonoBehaviour,
                     if (result.gameObject.name == "InventorySpace" && WithinInventorySpace() && NotOverlappingItems()) {
                         // Removed from a slot
                         if (equippedSlot != null) {
-                            if (item.itemInfo.itemType == Types.ItemType.Gun) {
+                            if (item.itemInfo.itemType == GameSystem.ItemType.Gun) {
                                 // Unequip gun
                                 item.GetPlayerController().UnequipGun((Gun)item, equippedSlot.index);
                             }
@@ -236,7 +236,7 @@ public class InventoryItem : MonoBehaviour,
                         equippedSlot.occupied = true;
 
                         // Equip gun
-                        if (slot.slotType == Types.ItemType.Gun) {
+                        if (slot.slotType == GameSystem.ItemType.Gun) {
                             item.GetPlayerController().EquipGun((Gun)item, equippedSlot.index);
                         }
 

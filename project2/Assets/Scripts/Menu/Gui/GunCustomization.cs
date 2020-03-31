@@ -26,16 +26,16 @@ public class GunCustomization : MonoBehaviour {
             foreach (InventoryItem attachment in gun.attachments) {
                 GameObject gunAttachment = Instantiate(attachmentPrefab);
                 switch (attachment.item.itemInfo.itemType) {
-                    case Types.ItemType.Muzzle:
+                    case GameSystem.ItemType.Muzzle:
                         gunAttachment.transform.position = muzzleSlot.transform.position;
                         break;
-                    case Types.ItemType.Scope:
+                    case GameSystem.ItemType.Scope:
                         gunAttachment.transform.position = scopeSlot.position;
                         break;
-                    case Types.ItemType.Magazine:
+                    case GameSystem.ItemType.Magazine:
                         gunAttachment.transform.position = magazineSlot.position;
                         break;
-                    case Types.ItemType.Underbarrel:
+                    case GameSystem.ItemType.Underbarrel:
                         gunAttachment.transform.position = underbarrelSlot.position;
                         break;
                 }

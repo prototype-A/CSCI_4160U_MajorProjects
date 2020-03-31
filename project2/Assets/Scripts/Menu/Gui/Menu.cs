@@ -31,4 +31,8 @@ public class Menu : MonoBehaviour {
     public void ToggleCrosshair(bool show) {
         crosshair.SetActive(show);
     }
+
+    public void ChangeCrosshair(Sprite crosshairSprite) {
+        crosshair.GetComponent<Image>().sprite = crosshairSprite;
+    }
 }

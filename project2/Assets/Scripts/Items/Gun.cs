@@ -9,8 +9,8 @@ public abstract class Gun : Item {
     public int baseDamage;
     public int damageModifier = 0;
     public float range;
-    [SerializeField] protected Types.FireMode[] fireModes = { Types.FireMode.Safety, Types.FireMode.Semi };
-    [SerializeField] protected Types.FireMode fireMode = Types.FireMode.Safety;
+    [SerializeField] protected GameSystem.FireMode[] fireModes = { GameSystem.FireMode.Safety, GameSystem.FireMode.Single };
+    [SerializeField] protected GameSystem.FireMode fireMode = GameSystem.FireMode.Safety;
     public InventoryItem[] attachments { get; }
     protected Animator gunAnimator;
     public GameObject casingPrefab;
