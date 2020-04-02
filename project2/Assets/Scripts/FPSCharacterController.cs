@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -189,13 +188,15 @@ public class FPSCharacterController : MonoBehaviour {
 
     public void EquipGun(Gun gun, int slotNum) {
         guns[slotNum] = gun;
-        gui.ShowGunGui(true);
+        gun.gameObject.SetActive(true);
+        gui.gunGui.Show(true);
     }
 
     public void UnequipGun(Gun gun, int slotNum) {
         gun.ads = false;
         guns[slotNum] = null;
-        gui.ShowGunGui(false);
+        gun.gameObject.SetActive(false);
+        gui.gunGui.Show(false);
     }
 
     public void AddRecoil(float hRecoil, float vRecoil, float recoilReturnSpeed) {
@@ -203,18 +204,6 @@ public class FPSCharacterController : MonoBehaviour {
         this.recoilReturnSpeed = recoilReturnSpeed;
         this.hRecoil = hRecoil;
         this.vRecoil += vRecoil;
-    }
-
-    public void KillConfirm() {
-        StartCoroutine(ShowKillConfirm());
-    }
-
-    private IEnumerator ShowKillConfirm() {
-        gui.killConfirm.SetActive(true);
-
-        yield return new WaitForSeconds(1.0f);
-
-        gui.killConfirm.SetActive(false);
     }
 
     public Transform GetCameraTransform() {

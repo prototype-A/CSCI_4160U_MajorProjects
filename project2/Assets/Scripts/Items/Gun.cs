@@ -1,4 +1,5 @@
-﻿using System.Collections;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,11 +12,16 @@ public abstract class Gun : Item {
     public float range;
     [SerializeField] protected GameSystem.FireMode[] fireModes = { GameSystem.FireMode.Safety, GameSystem.FireMode.Single };
     [SerializeField] protected GameSystem.FireMode fireMode = GameSystem.FireMode.Safety;
-    public InventoryItem[] attachments { get; }
     protected Animator gunAnimator;
+    public GameObject[] bulletHoles;
+
+    // Casing ejection
     public GameObject casingPrefab;
     public Transform casingEjectionPos;
-    public GameObject[] bulletHoles;
+
+    // Attachments
+    public InventoryItem[] attachments;
+    public GameSystem.ItemType[] attachmentTypes;
 
     // Recoil
     [SerializeField] protected float minRecoilX = 0.0f;
@@ -39,7 +45,7 @@ public abstract class Gun : Item {
         this.cameraT = GetPlayerController().GetCameraTransform();
 
         // Get player gui
-        gui = transform.parent.Find("GUI").GetComponent<Menu>();
+        gui = GetPlayerController().gui;
     }
 
     protected void Update() {
@@ -47,27 +53,22 @@ public abstract class Gun : Item {
         if (Input.GetButtonDown("Aim-Down Sight")) {
             if (!ads) {
                 ads = true;
-                gui.ToggleCrosshair(false);
+                gui.gunGui.ToggleCrosshair(false);
                 // Get sight position for camera
-                adsPos = transform.Find("Scope/AdsScopePos");
+                adsPos = transform.Find("Model/Scope/AdsScopePos");
                 if (adsPos == null) {
-                    adsPos = transform.Find("AdsSightPos");
+                    adsPos = transform.Find("Model/AdsSightPos");
                 }
             } else {
                 ads = false;
                 cameraT.localPosition = GetPlayerController().defaultCameraPos;
-                gui.ToggleCrosshair(true);
+                gui.gunGui.ToggleCrosshair(true);
             }
         }
         if (ads) {
             // Get ain-down sight position
             cameraT.position = adsPos.position;
             cameraT.rotation = adsPos.rotation;
-        }
-
-        // Reload
-        if (Input.GetButtonDown("Reload")) {
-            Reload();
         }
 
         // Change firing mode
@@ -78,14 +79,21 @@ public abstract class Gun : Item {
 
     // Gun methods
     protected void Fire() {
-        // Play animation
-        gunAnimator.SetBool("TriggerPulled", true);
+        // Magazine is in and has ammo
+        Magazine mag = GetMagazine();
+        if (mag != null && mag.ammoCount > 0) {
+            gunAnimator.SetBool("TriggerPulled", true);
+        }
     }
 
     private void FireBullet() {
+
+        gunAnimator.SetInteger("BulletCount", --GetMagazine().ammoCount);
+        gui.gunGui.SetAmmo(gunAnimator.GetInteger("BulletCount"));
+
         // Only hit the ground, buildings, or enemies
         LayerMask enemyMask = LayerMask.GetMask("Enemies");
-        LayerMask destructablesMask =  LayerMask.GetMask("Destructable");
+        LayerMask destructablesMask = LayerMask.GetMask("Destructable");
         LayerMask buildingMask = LayerMask.GetMask("Buildings");
 
         // Detect collision
@@ -95,7 +103,7 @@ public abstract class Gun : Item {
 
         } else if (Physics.Raycast(cameraT.position, cameraT.forward, out hit, range, buildingMask)) {
             // Make a bullet hole if hit a building
-            GameObject bulletHole = Instantiate(bulletHoles[Random.Range(0, bulletHoles.Length)],
+            GameObject bulletHole = Instantiate(bulletHoles[UnityEngine.Random.Range(0, bulletHoles.Length)],
                                     hit.point + (0.01f * hit.normal),
                                     Quaternion.LookRotation(-1 * hit.normal, hit.transform.up));
         } else if (Physics.Raycast(cameraT.position, cameraT.forward, out hit, range, destructablesMask)) {
@@ -104,8 +112,8 @@ public abstract class Gun : Item {
         }
 
         // Recoil
-        float recoilX = Random.Range(minRecoilX, maxRecoilX + 0.1f);
-        float recoilY = Random.Range(minRecoilY, maxRecoilY + 0.1f);
+        float recoilX = UnityEngine.Random.Range(minRecoilX, maxRecoilX + 0.1f);
+        float recoilY = UnityEngine.Random.Range(minRecoilY, maxRecoilY + 0.1f);
         GetPlayerController().AddRecoil(recoilX, recoilY, recoilReturnSpeed);
     }
 
@@ -123,7 +131,7 @@ public abstract class Gun : Item {
     }
 
     protected void ChangeFireMode() {
-
+        fireMode = fireModes[(Array.IndexOf(fireModes, fireMode) + 1) % fireModes.Length];
     }
 
     protected void EjectCasing() {
@@ -132,9 +140,9 @@ public abstract class Gun : Item {
                                                 casingEjectionPos.position,
                                                 Quaternion.Euler(casingEjectionPos.eulerAngles.x, casingEjectionPos.eulerAngles.y, casingEjectionPos.eulerAngles.z));
 
-            // Give casing spin and force
+            // Give casing a spin and force
             bulletCasing.GetComponent<Rigidbody>().AddRelativeForce(100.0f, 100.0f, 0.0f);
-            bulletCasing.GetComponent<Rigidbody>().AddTorque(transform.up * Random.Range(0.1f, 1.1f));
+            bulletCasing.GetComponent<Rigidbody>().AddTorque(transform.up * UnityEngine.Random.Range(0.1f, 1.1f));
         }
     }
 
@@ -150,8 +158,27 @@ public abstract class Gun : Item {
         return baseDamage + damageModifier;
     }
 
+    protected Magazine GetMagazine() {
+        return (Magazine)attachments[Array.IndexOf(attachmentTypes, GameSystem.ItemType.Magazine)].item;
+    }
+
 
     // Public methods
+    public bool AddAttachment(InventoryItem attach) {
+        GameSystem.ItemType attachmentType = attach.item.itemInfo.itemType;
+        if (Array.Exists(attachmentTypes, a => a == attachmentType)) {
+            attachments[Array.IndexOf(attachmentTypes, attachmentType)] = attach;
+            switch (attachmentType) {
+                case GameSystem.ItemType.Magazine:
+                    gui.gunGui.SetAmmo(((Magazine)attach.item).ammoCount);
+                    break;
+            }
+            return true;
+        }
+
+        return false;
+    }
+
     public void ShowModel(bool show) {
         gameObject.transform.Find("Model").gameObject.SetActive(show);
     }

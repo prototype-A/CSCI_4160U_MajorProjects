@@ -708,16 +708,23 @@ MonoBehaviour:
   range: 200
   fireModes: 010000000200000000000000
   fireMode: 0
+  bulletHoles:
+  - {fileID: 362836520264706155, guid: d1bba74344103e24dbeccce9e6272b06, type: 3}
+  casingPrefab: {fileID: 196718007576935804, guid: 2aca7e1e5261e1845b13e1e7005e5c8c,
+    type: 3}
+  casingEjectionPos: {fileID: 8909090727161643069}
+  attachments:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  attachmentTypes: 04000000070000000100000009000000
   minRecoilX: -0.5
   maxRecoilX: 0.5
   minRecoilY: 1.5
   maxRecoilY: 3
   recoilReturnSpeed: 2.5
-  casingPrefab: {fileID: 196718007576935804, guid: 2aca7e1e5261e1845b13e1e7005e5c8c,
-    type: 3}
-  casingEjectionPos: {fileID: 8909090727161643069}
-  bulletHoles:
-  - {fileID: 362836520264706155, guid: d1bba74344103e24dbeccce9e6272b06, type: 3}
+  ads: 0
 --- !u!1 &1968229028735316379
 GameObject:
   m_ObjectHideFlags: 0

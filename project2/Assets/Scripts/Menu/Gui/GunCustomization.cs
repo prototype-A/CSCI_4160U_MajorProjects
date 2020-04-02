@@ -3,7 +3,7 @@ using TMPro;
 
 public class GunCustomization : MonoBehaviour {
 
-    private Gun gun;
+    public Gun gun;
     [SerializeField] private TextMeshProUGUI nameText = null;
     [SerializeField] private Transform muzzleSlot = null;
     [SerializeField] private Transform magazineSlot = null;
@@ -24,20 +24,22 @@ public class GunCustomization : MonoBehaviour {
         // Show gun attachments
         if (gun.attachments != null && gun.attachments.Length > 0) {
             foreach (InventoryItem attachment in gun.attachments) {
-                GameObject gunAttachment = Instantiate(attachmentPrefab);
-                switch (attachment.item.itemInfo.itemType) {
-                    case GameSystem.ItemType.Muzzle:
-                        gunAttachment.transform.position = muzzleSlot.transform.position;
-                        break;
-                    case GameSystem.ItemType.Scope:
-                        gunAttachment.transform.position = scopeSlot.position;
-                        break;
-                    case GameSystem.ItemType.Magazine:
-                        gunAttachment.transform.position = magazineSlot.position;
-                        break;
-                    case GameSystem.ItemType.Underbarrel:
-                        gunAttachment.transform.position = underbarrelSlot.position;
-                        break;
+                if (attachment != null) {
+                    GameObject gunAttachment = Instantiate(attachmentPrefab);
+                    switch (attachment.item.itemInfo.itemType) {
+                        case GameSystem.ItemType.Muzzle:
+                            gunAttachment.transform.position = muzzleSlot.transform.position;
+                            break;
+                        case GameSystem.ItemType.Scope:
+                            gunAttachment.transform.position = scopeSlot.position;
+                            break;
+                        case GameSystem.ItemType.Magazine:
+                            gunAttachment.transform.position = magazineSlot.position;
+                            break;
+                        case GameSystem.ItemType.Underbarrel:
+                            gunAttachment.transform.position = underbarrelSlot.position;
+                            break;
+                    }
                 }
             }
         }

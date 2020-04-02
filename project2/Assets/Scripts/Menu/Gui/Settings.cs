@@ -34,13 +34,13 @@ public class Settings : MonoBehaviour {
 
     // Set crosshair sprite
     private void ChangeCrosshair() {
-        gui.ChangeCrosshair(crosshairs[currCrosshairNum]);
+        gui.gunGui.ChangeCrosshair(crosshairs[currCrosshairNum]);
         PlayerPrefs.SetInt(GameSystem.CROSSHAIR_SETTING_KEY, currCrosshairNum);
     }
 
     // Restore crosshair setting from saved game
     public void ChangeCrosshair(int num) {
         currCrosshairNum = num;
-        gui.ChangeCrosshair(crosshairs[currCrosshairNum]);
+        gui.gunGui.ChangeCrosshair(crosshairs[currCrosshairNum]);
     }
 }

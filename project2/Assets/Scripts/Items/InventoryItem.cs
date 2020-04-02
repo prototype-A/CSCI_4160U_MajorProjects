@@ -27,7 +27,7 @@ public class InventoryItem : MonoBehaviour,
 
     void Start() {
         rectTransform = GetComponent<RectTransform>();
-        gui = transform.parent.parent.parent.parent.gameObject.GetComponent<Menu>();
+        gui = item.GetPlayerController().gui;
     }
 
     void Update() {
@@ -239,8 +239,15 @@ public class InventoryItem : MonoBehaviour,
                         if (slot.slotType == GameSystem.ItemType.Gun) {
                             item.GetPlayerController().EquipGun((Gun)item, equippedSlot.index);
                         }
-
                         itemMoved = true;
+                        // Equip attachments
+                        if (slot.slotType == GameSystem.ItemType.Magazine ||
+                            slot.slotType == GameSystem.ItemType.Scope ||
+                            slot.slotType == GameSystem.ItemType.Muzzle ||
+                            slot.slotType == GameSystem.ItemType.Underbarrel) {
+                            itemMoved = gui.gunCustomization.gun.AddAttachment(this);
+                        }
+
                     }
                 }
 
