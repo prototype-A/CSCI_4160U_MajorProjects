@@ -37,6 +37,11 @@ public class FPSCharacterController : MonoBehaviour {
     public Gun[] guns;
     public int equippedGun = 0;
 
+    // Items & Interaction
+    [SerializeField] private float interactionRange = 2.0f;
+    public TextMeshProUGUI interactionText;
+
+
     void Start() {
         // Lock and hide cursor at center of screen
         Cursor.lockState = CursorLockMode.Locked;
@@ -119,6 +124,27 @@ public class FPSCharacterController : MonoBehaviour {
                 guns[0].ShowModel(false);
             }
             equippedGun = 1;
+        }
+
+        // Item interaction
+        RaycastHit hit;
+        if (Physics.Raycast(cameraT.position, cameraT.forward, out hit, interactionRange, LayerMask.GetMask("Items"))) {
+            Item item = hit.collider.GetComponent<Item>();
+            interactionText.text = "Press [E] to pick up \"" + item.itemInfo.name + "\"";
+            if (Input.GetButtonDown("Interact")) {
+                // Pick up item
+                item.PickUp();
+                item.gameObject.transform.SetParent(transform);
+                item.gameObject.SetActive(false);
+                GameObject invItem = Instantiate(gui.inventoryItemPrefab,
+                                                    new Vector3(0, 0, 0),
+                                                    Quaternion.Euler(0, 0, 0),
+                                                    gui.inventoryItems);
+                invItem.gameObject.transform.localPosition = new Vector3(0, 0, 0);
+                invItem.GetComponent<InventoryItem>().SetItem(item);
+            }
+        } else {
+            interactionText.text = "";
         }
     }
 

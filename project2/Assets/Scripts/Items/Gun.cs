@@ -100,7 +100,7 @@ public abstract class Gun : Item {
         RaycastHit hit;
         if (Physics.Raycast(cameraT.position, cameraT.forward, out hit, range, enemyMask)) {
             // Hit an enemy
-
+            hit.collider.GetComponent<EnemyController>().TakeDamage(GetDamage());
         } else if (Physics.Raycast(cameraT.position, cameraT.forward, out hit, range, buildingMask)) {
             // Make a bullet hole if hit a building
             GameObject bulletHole = Instantiate(bulletHoles[UnityEngine.Random.Range(0, bulletHoles.Length)],

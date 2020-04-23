@@ -400,6 +400,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6587564865318821643}
   - component: {fileID: 709313830473694284}
+  - component: {fileID: 6442113004462022277}
   m_Layer: 0
   m_Name: Water Bottle
   m_TagString: Untagged
@@ -438,7 +439,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d06a6c2da371d634284788855b505b6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnPoint: {fileID: 0}
   itemInfo: {fileID: 11400000, guid: 1db147421ef9e864b8ac3256b18eeed5, type: 2}
   healthHealAmount: 0
   hungerHealAmount: 0
   thirstHealAmount: 30
+--- !u!136 &6442113004462022277
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7868037654363434264}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.048716
+  m_Height: 0.30916667
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.13836855, z: 0}

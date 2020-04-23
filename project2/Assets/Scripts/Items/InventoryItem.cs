@@ -14,6 +14,7 @@ public class InventoryItem : MonoBehaviour,
                             IPointerExitHandler {
 
     public Item item;
+    public Image itemImage;
     public ItemSlot equippedSlot;
     private RectTransform rectTransform;
     private Menu gui;
@@ -61,6 +62,8 @@ public class InventoryItem : MonoBehaviour,
 
     public void SetItem(Item item) {
         this.item = item;
+        itemImage.sprite = item.itemInfo.srcImg;
+        itemImage.color = new Color(255, 255, 255, 255);
         SetSelfSize();
     }
 
@@ -144,7 +147,10 @@ public class InventoryItem : MonoBehaviour,
         pointerEventData = eventData;
         if (eventData.clickCount == 2) {
             // Double click
-            Debug.Log("Double-clicked item");
+            if (item.Use()) {
+                // Consumed item
+                Destroy(gameObject);
+            }
         } else {
             if (item.itemInfo.itemType == GameSystem.ItemType.Gun) {
                 // Show gun attachments in customization pane

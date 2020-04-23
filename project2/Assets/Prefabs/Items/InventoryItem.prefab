@@ -161,4 +161,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  mouseHoverDuration: 1
+  itemImage: {fileID: 3292757194464980066}
+  equippedSlot: {fileID: 0}

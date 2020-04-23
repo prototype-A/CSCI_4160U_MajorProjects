@@ -9,7 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1802405727097167916}
-  - component: {fileID: 438158923315244137}
+  - component: {fileID: 2710124715859104861}
+  - component: {fileID: -5913573835626099341}
   m_Layer: 0
   m_Name: Small Medkit
   m_TagString: Untagged
@@ -32,7 +33,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &438158923315244137
+--- !u!65 &2710124715859104861
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3411537936038449727}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.7038823, z: 0.5391761}
+  m_Center: {x: 0, y: 0.35348162, z: -0.062185433}
+--- !u!114 &-5913573835626099341
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,6 +58,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d06a6c2da371d634284788855b505b6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnPoint: {fileID: 0}
   itemInfo: {fileID: 11400000, guid: ae4f1df5c2e016944a047dbdaafe797f, type: 2}
   healthHealAmount: 30
   hungerHealAmount: 0

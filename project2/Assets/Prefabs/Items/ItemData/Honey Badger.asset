@@ -17,4 +17,4 @@ MonoBehaviour:
   itemType: 3
   size: {x: 4, y: 2}
   srcImg: {fileID: 2800000, guid: f8afecf935b97b34f99984125d3cf555, type: 3}
-  prefab: {fileID: 0}
+  prefab: {fileID: 1799801766866924693, guid: 464b46655344f5b4381ee8705b2d1c30, type: 3}

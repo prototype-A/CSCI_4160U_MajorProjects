@@ -1,13 +1,14 @@
 using System;
 using UnityEngine;
 
-public class ConsumableItem : InventoryItem {
+public class ConsumableItem : Item {
 
     public int healthHealAmount;
     public int hungerHealAmount;
     public int thirstHealAmount;
 
-    public void Use(FPSCharacterController player) {
+    public override bool Use() {
+        FPSCharacterController player = GetPlayerController();
         int healthHeal = healthHealAmount;
         if (healthHealAmount < 0) {
             healthHeal = 0;
@@ -23,9 +24,11 @@ public class ConsumableItem : InventoryItem {
             thirstHeal = 0;
             player.Dehydrate(Math.Abs(thirstHealAmount));
         }
-        
+
         player.Heal(healthHeal, hungerHeal, thirstHeal);
 
         Destroy(gameObject);
+        
+        return true;
     }
 }

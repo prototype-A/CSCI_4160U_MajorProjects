@@ -18,4 +18,8 @@ public class AutomaticGun : Gun {
             base.Update();
         }
     }
+
+    public override bool Use() {
+        return false;
+    }
 }

@@ -8,7 +8,7 @@ public class ItemInfo : ScriptableObject {
     public string desc;
     public GameSystem.ItemType itemType;
     public Vector2 size;
-    public Texture srcImg;
+    public Sprite srcImg;
     public GameObject prefab;
 
 }
