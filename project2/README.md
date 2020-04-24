@@ -8,6 +8,8 @@ Alex Zheng
 * Mouse - Look around
 * W, A, S, D - Movement
 * Left Shift - Sprint
-* Tab - Open Inventory
 * E - Pick up item
 * Mouse Left Click - Fire gun
+* Tab - Open inventory
+* Esc - Open system menu
+  
