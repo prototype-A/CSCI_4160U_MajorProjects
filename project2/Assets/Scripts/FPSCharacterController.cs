@@ -83,6 +83,11 @@ public class FPSCharacterController : MonoBehaviour {
             }
         }
 
+        // Original vertical rotation of player camera before firing
+        if (Input.GetButtonDown("Fire")) {
+            fireV = transform.rotation.x;
+        }
+
         // Player movement
         float hMovement = Input.GetAxis("Horizontal");
         float vMovement = Input.GetAxis("Vertical");
@@ -109,9 +114,15 @@ public class FPSCharacterController : MonoBehaviour {
             }
         }
 
-        // Original vertical rotation of player camera before firing
-        if (Input.GetButtonDown("Fire")) {
-            fireV = transform.rotation.x;
+        // Open system menu
+        if (Input.GetButtonDown("System Menu")) {
+            if (!gui.systemMenu.systemMenu.activeSelf) {
+                gui.systemMenu.ShowSystemMenu(true);
+                Cursor.lockState = CursorLockMode.None;
+            } else {
+                gui.systemMenu.ShowSystemMenu(false);
+                Cursor.lockState = CursorLockMode.Locked;
+            }
         }
 
         // Change weapons
