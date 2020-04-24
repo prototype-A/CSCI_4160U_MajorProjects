@@ -13,7 +13,7 @@ public abstract class Item : MonoBehaviour {
         infoPanel.SetDesc(itemInfo.desc);
     }
 
-    public void PickUp() {
+    public virtual void PickUp() {
         spawnPoint.spawnedItem = null;
     }
 

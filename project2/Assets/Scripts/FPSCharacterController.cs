@@ -133,15 +133,21 @@ public class FPSCharacterController : MonoBehaviour {
             interactionText.text = "Press [E] to pick up \"" + item.itemInfo.name + "\"";
             if (Input.GetButtonDown("Interact")) {
                 // Pick up item
-                item.PickUp();
                 item.gameObject.transform.SetParent(transform);
                 item.gameObject.SetActive(false);
                 GameObject invItem = Instantiate(gui.inventoryItemPrefab,
                                                     new Vector3(0, 0, 0),
                                                     Quaternion.Euler(0, 0, 0),
                                                     gui.inventoryItems);
+                try {
+                    item.gameObject.transform.localPosition = ((Gun)item).instantiatePos;
+                } catch {
+                    item.gameObject.transform.localPosition = new Vector3(0, 0, 0);
+                }
+                item.gameObject.transform.localRotation = Quaternion.Euler(0, 0, 0);
                 invItem.gameObject.transform.localPosition = new Vector3(0, 0, 0);
                 invItem.GetComponent<InventoryItem>().SetItem(item);
+                item.PickUp();
             }
         } else {
             interactionText.text = "";

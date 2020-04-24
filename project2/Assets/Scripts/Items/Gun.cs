@@ -40,12 +40,6 @@ public abstract class Gun : Item {
     void Start() {
         // Get gun animator
         gunAnimator = GetComponent<Animator>();
-
-        // Get camera transform for aim-down sights
-        this.cameraT = GetPlayerController().GetCameraTransform();
-
-        // Get player gui
-        gui = GetPlayerController().gui;
     }
 
     protected void Update() {
@@ -77,13 +71,25 @@ public abstract class Gun : Item {
         }
     }
 
+    public override void PickUp() {
+        base.PickUp();
+
+        // Get player gui
+        gui = GetPlayerController().gui;
+
+        // Get camera transform for aim-down sights
+        this.cameraT = GetPlayerController().GetCameraTransform();
+    }
+
     // Gun methods
     protected void Fire() {
         // Magazine is in and has ammo
-        Magazine mag = GetMagazine();
-        if (mag != null && mag.ammoCount > 0) {
-            gunAnimator.SetBool("TriggerPulled", true);
-        }
+        try {
+            Magazine mag = GetMagazine();
+            if (mag != null && mag.ammoCount > 0) {
+                gunAnimator.SetBool("TriggerPulled", true);
+            }
+        } catch {}
     }
 
     private void FireBullet() {

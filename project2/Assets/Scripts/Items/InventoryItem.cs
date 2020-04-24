@@ -203,10 +203,7 @@ public class InventoryItem : MonoBehaviour,
             gui.GetGraphicRaycaster().Raycast(eventData, results);
 
             if (results.Count == 1) {
-                Debug.Log("Dropping Item");
-
-                // Drop item on ground
-
+                // Drop item
                 gui.gunCustomization.ClearGunCustomization();
                 Destroy(gameObject);
             } else {

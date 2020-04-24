@@ -648,6 +648,7 @@ GameObject:
   - component: {fileID: 3360098683557234310}
   - component: {fileID: 9209676381236744246}
   - component: {fileID: 2891322250664221380}
+  - component: {fileID: 406368258594088082}
   m_Layer: 12
   m_Name: Honey Badger
   m_TagString: Untagged
@@ -701,6 +702,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1e5d7d7064b31340a144688c1b035e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnPoint: {fileID: 0}
   itemInfo: {fileID: 11400000, guid: fe8951ec885e34447a327447595788bc, type: 2}
   instantiatePos: {x: 0.25, y: 0.25, z: 1}
   baseDamage: 36
@@ -725,6 +727,19 @@ MonoBehaviour:
   maxRecoilY: 3
   recoilReturnSpeed: 2.5
   ads: 0
+--- !u!65 &406368258594088082
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799801766866924693}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.23241134, y: 1.0527917, z: 5.11625}
+  m_Center: {x: -0.061976902, y: 0.14358047, z: 0.09564549}
 --- !u!1 &1968229028735316379
 GameObject:
   m_ObjectHideFlags: 0

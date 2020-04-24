@@ -16,5 +16,5 @@ MonoBehaviour:
   desc: A bottle of water that will quench your thirst
   itemType: 2
   size: {x: 1, y: 1}
-  srcImg: {fileID: 2800000, guid: 1c80e9d6cb07589449f1fe14d030a22b, type: 3}
+  srcImg: {fileID: 21300000, guid: 1c80e9d6cb07589449f1fe14d030a22b, type: 3}
   prefab: {fileID: 7868037654363434264, guid: 64bfd0ec085276f4a83f73ed491bf3ad, type: 3}

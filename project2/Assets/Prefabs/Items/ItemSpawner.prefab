@@ -106,9 +106,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12513fdaf5e76a5479f1f7088cc572c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnedItem: {fileID: 0}
   respawnTime: 120
   itemPrefabs:
   - {fileID: -90985751883652985, guid: dabeabd7f37d9f943b203f06b8b3899b, type: 3}
   - {fileID: -5913573835626099341, guid: 8dfe5aa9619cdc74ba6061d094cf57eb, type: 3}
   - {fileID: 709313830473694284, guid: 64bfd0ec085276f4a83f73ed491bf3ad, type: 3}
-  spawnedItem: {fileID: 0}
+  - {fileID: 7937913450419399858, guid: 462d1f1e7c2e3e842b639ffcb2e1e12d, type: 3}
+  - {fileID: 2891322250664221380, guid: 464b46655344f5b4381ee8705b2d1c30, type: 3}
+  - {fileID: 0}
+  itemSpawnChance: 1400000014000000140000000f0000000500000014000000
