@@ -89,10 +89,13 @@ public class FPSCharacterController : MonoBehaviour {
         Vector3 movement = transform.right * hMovement + transform.forward * vMovement;
         if (Input.GetButton("Run")) {
             // Running
-            charController.SimpleMove(movement * runSpeed);
-        } else {
+            charController.Move((Vector3.Normalize(movement) + Physics.gravity) * runSpeed * 0.01f);
+        } else if (movement.magnitude > 0) {
             // Walking
-            charController.SimpleMove(movement * walkSpeed);
+            charController.Move((Vector3.Normalize(movement) + Physics.gravity) * walkSpeed * 0.01f);
+        } else {
+            // Stop moving if no inputs
+            charController.Move(new Vector3(0, 0, 0));
         }
 
         // Open inventory
@@ -112,14 +115,18 @@ public class FPSCharacterController : MonoBehaviour {
         }
 
         // Change weapons
-        if (Input.GetButtonDown("Main Weapon") && guns[0] != null) {
-            guns[0].ShowModel(true);
+        if (Input.GetButtonDown("Main Weapon")) {
+            if (guns[0] != null) {
+                guns[0].ShowModel(true);
+            }
             if (guns[1] != null) {
                 guns[1].ShowModel(false);
             }
             equippedGun = 0;
-        } else if (Input.GetButtonDown("Second Weapon") && guns[1] != null) {
-            guns[1].ShowModel(true);
+        } else if (Input.GetButtonDown("Second Weapon")) {
+            if (guns[1] != null) {
+                guns[1].ShowModel(true);
+            }
             if (guns[0] != null) {
                 guns[0].ShowModel(false);
             }
