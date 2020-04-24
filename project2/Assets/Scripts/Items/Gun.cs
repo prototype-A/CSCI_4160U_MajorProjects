@@ -93,7 +93,6 @@ public abstract class Gun : Item {
     }
 
     private void FireBullet() {
-
         gunAnimator.SetInteger("BulletCount", --GetMagazine().ammoCount);
         gui.gunGui.SetAmmo(gunAnimator.GetInteger("BulletCount"));
 
@@ -177,6 +176,7 @@ public abstract class Gun : Item {
             switch (attachmentType) {
                 case GameSystem.ItemType.Magazine:
                     gui.gunGui.SetAmmo(((Magazine)attach.item).ammoCount);
+                    Reload();
                     break;
             }
             return true;

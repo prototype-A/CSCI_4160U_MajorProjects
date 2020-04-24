@@ -92,12 +92,14 @@ public class FPSCharacterController : MonoBehaviour {
         float hMovement = Input.GetAxis("Horizontal");
         float vMovement = Input.GetAxis("Vertical");
         Vector3 movement = transform.right * hMovement + transform.forward * vMovement;
-        if (Input.GetButton("Run")) {
-            // Running
-            charController.Move((Vector3.Normalize(movement) + Physics.gravity) * runSpeed * 0.01f);
-        } else if (movement.magnitude > 0) {
-            // Walking
-            charController.Move((Vector3.Normalize(movement) + Physics.gravity) * walkSpeed * 0.01f);
+        if (movement.magnitude > 0) {
+            if (Input.GetButton("Run")) {
+                // Running
+                charController.Move((Vector3.Normalize(movement) + Physics.gravity) * runSpeed * 0.01f);
+            } else {
+                // Walking
+                charController.Move((Vector3.Normalize(movement) + Physics.gravity) * walkSpeed * 0.01f);
+            }
         } else {
             // Stop moving if no inputs
             charController.Move(new Vector3(0, 0, 0));
@@ -116,10 +118,10 @@ public class FPSCharacterController : MonoBehaviour {
 
         // Open system menu
         if (Input.GetButtonDown("System Menu")) {
-            if (!gui.systemMenu.systemMenu.activeSelf) {
+            if (!gui.systemMenu.IsActive()) {
                 gui.systemMenu.ShowSystemMenu(true);
                 Cursor.lockState = CursorLockMode.None;
-            } else {
+            } else if (gui.systemMenu.systemMenu.gameObject.activeSelf) {
                 gui.systemMenu.ShowSystemMenu(false);
                 Cursor.lockState = CursorLockMode.Locked;
             }

@@ -5,9 +5,26 @@ using UnityEngine.SceneManagement;
 
 public class SaveLoad : MonoBehaviour {
 
+    public enum Mode {
+        SAVE,
+        LOAD
+    }
+
+    public Mode mode;
     public Transform saves;
     public GameSystem game;
 
+
+    // Individual save profile clicked
+    public void SaveLoadGame(int profileNum) {
+        if (mode == Mode.SAVE) {
+            // Save game
+            SaveGame(profileNum);
+        } else {
+            // Load game
+            LoadSavedGame(profileNum);
+        }
+    }
 
     // Save game
     public void SaveGame(int saveNum) {

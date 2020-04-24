@@ -3,9 +3,13 @@
 public class SystemMenu : MonoBehaviour {
 
     public GameObject systemMenu;
-    public GameObject saveLoadMenu;
+    public SaveLoad saveLoadMenu;
     public GameObject settingsMenu;
 
+
+    public bool IsActive() {
+        return systemMenu.activeSelf || saveLoadMenu.gameObject.activeSelf || settingsMenu.activeSelf;
+    }
 
     public void Back(GameObject currMenu) {
         currMenu.SetActive(false);
@@ -17,17 +21,19 @@ public class SystemMenu : MonoBehaviour {
     }
 
     public void ShowSaveMenu(bool show) {
-        systemMenu.SetActive(false);
-        saveLoadMenu.SetActive(show);
+        systemMenu.SetActive(!show);
+        saveLoadMenu.gameObject.SetActive(show);
+        saveLoadMenu.mode = SaveLoad.Mode.SAVE;
     }
 
     public void ShowLoadMenu(bool show) {
-        systemMenu.SetActive(false);
-        saveLoadMenu.SetActive(show);
+        systemMenu.SetActive(!show);
+        saveLoadMenu.gameObject.SetActive(show);
+        saveLoadMenu.mode = SaveLoad.Mode.LOAD;
     }
 
     public void ShowSettingsMenu(bool show) {
-        systemMenu.SetActive(false);
+        systemMenu.SetActive(!show);
         settingsMenu.SetActive(show);
     }
 
